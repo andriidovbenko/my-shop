@@ -13,9 +13,9 @@ export function Header() {
             <NextImage
               src="/logo.png"
               alt="3Dиво"
-              width={240}
-              height={120}
-              style={{ objectFit: "contain", width: "auto", height: "120px" }}
+              width={1027}
+              height={863}
+              style={{ width: "auto", height: "72px" }}
               priority
             />
           </Link>
