@@ -3,6 +3,7 @@ import { CartPageContent } from "@/components/cart/CartPageContent"
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs"
 import { buildTitle } from "@/lib/metadata"
 import { routes } from "@/lib/routes"
+import { RecentlyViewedProducts } from "@/components/catalog/RecentlyViewedProducts"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -16,12 +17,15 @@ export default function CartPage() {
   ]
 
   return (
-    <Container maxW="5xl" py={8}>
-      <Breadcrumbs items={breadcrumbs} />
-      <Heading as="h1" size="xl" mb={8} color="text.default" fontFamily="heading">
-        Кошик
-      </Heading>
-      <CartPageContent />
-    </Container>
+    <>
+      <Container maxW="5xl" py={8}>
+        <Breadcrumbs items={breadcrumbs} />
+        <Heading as="h1" size="xl" mb={8} color="text.default" fontFamily="heading">
+          Кошик
+        </Heading>
+        <CartPageContent />
+      </Container>
+      <RecentlyViewedProducts />
+    </>
   )
 }

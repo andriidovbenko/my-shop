@@ -8,6 +8,8 @@ import { ProductGallery } from "@/components/product/ProductGallery"
 import { ProductActions } from "@/components/product/ProductActions"
 import { PortableTextRenderer } from "@/components/ui/PortableTextRenderer"
 import { routes } from "@/lib/routes"
+import { TrackProductView } from "@/components/product/TrackProductView"
+import { RecentlyViewedProducts } from "@/components/catalog/RecentlyViewedProducts"
 import type { Metadata } from "next"
 import type { PortableTextBlock } from "@portabletext/react"
 
@@ -138,6 +140,7 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <TrackProductView slug={product.slug.current} />
       <Container maxW="7xl" py={8}>
         <Breadcrumbs items={breadcrumbs} />
         <Box display={{ base: "block", md: "flex" }} gap={10}>
@@ -189,6 +192,7 @@ export default async function ProductPage({
           </VStack>
         </Box>
       </Container>
+      <RecentlyViewedProducts currentSlug={product.slug.current} />
     </>
   )
 }

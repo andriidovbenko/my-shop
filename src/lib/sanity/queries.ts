@@ -61,3 +61,13 @@ export async function getSitemapProducts(): Promise<{ slug: string; updatedAt: s
 export async function getSitemapCategories(): Promise<{ slug: string }[]> {
   return client.fetch(`*[_type == "category"]{ "slug": slug.current }`);
 }
+
+export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {
+  if (!slugs.length) return []
+  return client.fetch(
+    `*[_type == "product" && slug.current in $slugs && inStock == true] {
+      _id, name, slug, price, images, category->{_id, name, slug}, inStock, attributes
+    }`,
+    { slugs }
+  )
+}
