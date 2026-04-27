@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs"
 import { ProductGallery } from "@/components/product/ProductGallery"
 import { ProductActions } from "@/components/product/ProductActions"
 import { PortableTextRenderer } from "@/components/ui/PortableTextRenderer"
+import { routes } from "@/lib/routes"
 import type { Metadata } from "next"
 import type { PortableTextBlock } from "@portabletext/react"
 
@@ -118,13 +119,13 @@ export default async function ProductPage({
   }
 
   const breadcrumbs = [
-    { label: "Головна", href: "/" },
-    { label: "Каталог", href: "/catalog" },
+    { label: "Головна", href: routes.home },
+    { label: "Каталог", href: routes.catalog },
     ...(product.category
       ? [
           {
             label: product.category.name,
-            href: `/catalog?category=${product.category.slug.current}`,
+            href: routes.category(product.category.slug.current),
           },
         ]
       : []),

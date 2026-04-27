@@ -2,6 +2,7 @@ import { Container, Heading } from "@chakra-ui/react"
 import { CartPageContent } from "@/components/cart/CartPageContent"
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs"
 import { buildTitle } from "@/lib/metadata"
+import { routes } from "@/lib/routes"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function CartPage() {
   const breadcrumbs = [
-    { label: "Головна", href: "/" },
+    { label: "Головна", href: routes.home },
     { label: "Кошик" },
   ]
 
