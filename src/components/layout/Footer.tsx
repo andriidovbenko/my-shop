@@ -16,7 +16,7 @@ export function Footer() {
               Каталог
             </Link>
             <Link href={routes.about} style={{ color: "inherit", textDecoration: "none" }}>
-              Про магазин
+              Про нас
             </Link>
           </VStack>
 

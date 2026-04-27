@@ -41,7 +41,7 @@ export default function PrivacyPage() {
 
           <Heading as="h2" size="md" color="text.default">5. Контакти</Heading>
           <Text color="text.default" lineHeight="tall">
-            З питань захисту персональних даних звертайтесь за контактами, вказаними у розділі «Про магазин».
+            З питань захисту персональних даних звертайтесь за контактами, вказаними у розділі «Про нас».
           </Text>
         </VStack>
       </VStack>

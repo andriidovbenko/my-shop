@@ -6,6 +6,7 @@ import { ProductGrid } from "@/components/catalog/ProductGrid"
 import { LinkButton } from "@/components/ui/LinkButton"
 import { urlFor } from "@/lib/sanity/image"
 import { buildTitle } from "@/lib/metadata"
+import { Printer3DIcon } from "@/components/icons/Printer3DIcon"
 import { routes } from "@/lib/routes"
 import type { Metadata } from "next"
 
@@ -14,6 +15,29 @@ export const metadata: Metadata = {
 }
 
 export const revalidate = 3600
+
+const features = [
+  {
+    icon: "🛒",
+    title: "Є в наявності",
+    desc: "Всі товари — готові до відправки, без очікування виготовлення",
+  },
+  {
+    icon: "⚡",
+    title: "Швидка відправка",
+    desc: "Відправляємо Новою Поштою протягом 1–2 робочих днів після оплати",
+  },
+  {
+    icon: "✅",
+    title: "Контроль якості",
+    desc: "Кожен виріб перевіряємо перед відправкою — ніяких сюрпризів",
+  },
+  {
+    icon: "📦",
+    title: "Надійне пакування",
+    desc: "Пакуємо з запасом міцності — товар приїде цілим навіть здалеку",
+  },
+]
 
 export default async function HomePage() {
   const products = await getAllProducts()
@@ -24,53 +48,151 @@ export default async function HomePage() {
     <Box>
       {/* Hero */}
       <Box
-        bgGradient="linear(to-br, brand.700, brand.500, brand.400)"
+        bg="dark.900"
         color="white"
-        py={{ base: 16, md: 24 }}
-        textAlign="center"
+        py={{ base: 14, md: 20 }}
         position="relative"
         overflow="hidden"
       >
+        {/* Background decorative blobs */}
         <Box
           position="absolute"
-          top="-100px"
-          left="-100px"
-          w="360px"
-          h="360px"
+          top="-120px"
+          left="-120px"
+          w="400px"
+          h="400px"
           borderRadius="full"
-          bg="whiteAlpha.100"
+          bg="#1A8FE3"
+          opacity={0.08}
           pointerEvents="none"
+          filter="blur(60px)"
         />
         <Box
           position="absolute"
-          bottom="-80px"
-          right="-80px"
-          w="300px"
-          h="300px"
+          bottom="-100px"
+          right="-100px"
+          w="350px"
+          h="350px"
           borderRadius="full"
-          bg="whiteAlpha.100"
+          bg="#F5821F"
+          opacity={0.1}
           pointerEvents="none"
+          filter="blur(60px)"
         />
-        <Container maxW="4xl" position="relative">
-          <Heading as="h1" size="2xl" mb={4} letterSpacing="tight" fontFamily="heading">
-            {process.env.NEXT_PUBLIC_SITE_NAME || "My Shop"}
-          </Heading>
-          <Text fontSize="xl" mb={10} opacity={0.9} maxW="lg" mx="auto" lineHeight="tall">
-            {process.env.NEXT_PUBLIC_SITE_DESCRIPTION || "Купуйте найкращі товари"}
-          </Text>
-          <LinkButton
-            href={routes.catalog}
-            size="lg"
-            bg="white"
-            color="brand.700"
-            _hover={{ bg: "gray.50", transform: "translateY(-2px)", shadow: "xl" }}
-            shadow="lg"
-            fontWeight="bold"
-            px={10}
-            transition="all 0.2s"
+
+        <Container maxW="5xl" position="relative">
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            align="center"
+            gap={{ base: 8, md: 12 }}
           >
-            Перейти до каталогу
-          </LinkButton>
+            {/* 3D Printer illustration */}
+            <Box
+              flexShrink={0}
+              mx={{ base: "auto", md: 0 }}
+              w={{ base: "200px", md: "240px" }}
+              h={{ base: "200px", md: "240px" }}
+              boxShadow="0 0 80px rgba(26,143,227,0.25)"
+            >
+              <Printer3DIcon />
+            </Box>
+
+            {/* Text */}
+            <Box textAlign={{ base: "center", md: "left" }}>
+              <Text
+                fontSize={{ base: "sm", md: "md" }}
+                fontWeight="600"
+                color="#F5821F"
+                letterSpacing="widest"
+                textTransform="uppercase"
+                mb={3}
+              >
+                Магазин 3D-виробів
+              </Text>
+              <Heading
+                as="h1"
+                fontSize={{ base: "3xl", md: "5xl" }}
+                fontWeight="800"
+                lineHeight="1.1"
+                mb={4}
+                letterSpacing="tight"
+              >
+                Друкуємо диво{" "}
+                <Box as="span" color="#1A8FE3">
+                  в кожній
+                </Box>{" "}
+                <Box as="span" color="#F5821F">
+                  деталі
+                </Box>
+              </Heading>
+              <Text
+                fontSize={{ base: "md", md: "lg" }}
+                color="whiteAlpha.700"
+                mb={8}
+                maxW="480px"
+                mx={{ base: "auto", md: 0 }}
+                lineHeight="tall"
+              >
+                Унікальні вироби з 3D-друку — в наявності та готові до відправки. Якість, що відчувається в кожному шарі.
+              </Text>
+              <Flex
+                gap={4}
+                justify={{ base: "center", md: "flex-start" }}
+                wrap="wrap"
+              >
+                <LinkButton
+                  href={routes.catalog}
+                  size="lg"
+                  bg="#1A8FE3"
+                  color="white"
+                  _hover={{ bg: "#1478c5", transform: "translateY(-2px)", shadow: "xl" }}
+                  shadow="lg"
+                  fontWeight="bold"
+                  px={8}
+                  transition="all 0.2s"
+                >
+                  Переглянути каталог
+                </LinkButton>
+                <LinkButton
+                  href={routes.about}
+                  size="lg"
+                  variant="outline"
+                  borderColor="whiteAlpha.400"
+                  color="white"
+                  _hover={{ bg: "whiteAlpha.100", borderColor: "white" }}
+                  px={8}
+                  transition="all 0.2s"
+                >
+                  Про нас
+                </LinkButton>
+              </Flex>
+            </Box>
+          </Flex>
+        </Container>
+      </Box>
+
+      {/* Features strip */}
+      <Box bg="gray.50" py={12} borderBottomWidth="1px" borderColor="gray.100">
+        <Container maxW="7xl">
+          <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} gap={6}>
+            {features.map((f) => (
+              <Flex
+                key={f.title}
+                align="flex-start"
+                gap={4}
+                bg="white"
+                p={5}
+                borderRadius="card"
+                shadow="card"
+              >
+                <Text fontSize="2xl" flexShrink={0}>{f.icon}</Text>
+                <Box>
+                  <Text fontWeight="700" fontSize="sm" color="gray.900" mb={1}>{f.title}</Text>
+                  <Text fontSize="xs" color="gray.500" lineHeight="tall">{f.desc}</Text>
+                </Box>
+              </Flex>
+            ))}
+          </SimpleGrid>
         </Container>
       </Box>
 
@@ -155,6 +277,7 @@ export default async function HomePage() {
         </Flex>
         <ProductGrid products={latestProducts} />
       </Container>
+
     </Box>
   )
 }
