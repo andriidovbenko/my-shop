@@ -13,17 +13,22 @@ import {
   Button,
   Divider,
   Text,
+  RadioGroup,
+  Radio,
+  Stack,
 } from "@chakra-ui/react"
 import Link from "next/link"
 import { z } from "zod"
 import { useCart } from "@/context/CartContext"
 import { DeliverySelector, type DeliveryValue } from "./DeliverySelector"
 import { routes } from "@/lib/routes"
+import type { MessengerType } from "@/types"
 
 const customerSchema = z.object({
   name: z.string().min(2, "Мінімум 2 символи"),
   email: z.string().email("Невірний формат email"),
   phone: z.string().regex(/^\+380\d{9}$/, "Формат: +380XXXXXXXXX"),
+  messenger: z.enum(["viber", "telegram", "whatsapp"], { message: "Оберіть месенджер" }),
 })
 
 type CustomerFields = z.infer<typeof customerSchema>
@@ -46,7 +51,7 @@ export function CheckoutForm() {
   const router = useRouter()
   const { items, totalPrice } = useCart()
 
-  const [customer, setCustomer] = useState<CustomerFields>({ name: "", email: "", phone: "" })
+  const [customer, setCustomer] = useState<CustomerFields>({ name: "", email: "", phone: "", messenger: "viber" })
   const [delivery, setDelivery] = useState<DeliveryValue>(emptyDelivery)
   const [customerErrors, setCustomerErrors] = useState<CustomerErrors>({})
   const [deliveryErrors, setDeliveryErrors] = useState<DeliveryErrors>({})
@@ -183,6 +188,27 @@ export function CheckoutForm() {
                   _focus={{ borderColor: "accent.default", boxShadow: "none" }}
                 />
                 <FormErrorMessage>{customerErrors.phone}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={!!customerErrors.messenger}>
+                <FormLabel color="text.default">Зручний месенджер для зв&apos;язку</FormLabel>
+                <RadioGroup
+                  value={customer.messenger}
+                  onChange={(v) => setCustomer({ ...customer, messenger: v as MessengerType })}
+                >
+                  <Stack direction="row" gap={5}>
+                    <Radio value="viber" borderColor="border.default">
+                      <Text color="text.default">Viber</Text>
+                    </Radio>
+                    <Radio value="telegram" borderColor="border.default">
+                      <Text color="text.default">Telegram</Text>
+                    </Radio>
+                    <Radio value="whatsapp" borderColor="border.default">
+                      <Text color="text.default">WhatsApp</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+                <FormErrorMessage>{customerErrors.messenger}</FormErrorMessage>
               </FormControl>
             </VStack>
           </Box>

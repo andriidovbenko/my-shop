@@ -47,6 +47,7 @@ export type OrderStatus =
 export type DeliveryType = "warehouse" | "postomat" | "courier";
 export type DeliveryCarrier = "novaposhta" | "ukrposhta";
 export type UkrposhtaMethod = "post_office" | "courier";
+export type MessengerType = "viber" | "telegram" | "whatsapp";
 
 export interface Order {
   _id: string;
@@ -56,6 +57,7 @@ export interface Order {
     name: string;
     email: string;
     phone: string;
+    messenger: MessengerType;
   };
   delivery: {
     carrier: DeliveryCarrier;

@@ -26,6 +26,7 @@ const orderSchema = z.object({
     name: z.string().min(2),
     email: z.string().email(),
     phone: z.string().regex(/^\+380\d{9}$/),
+    messenger: z.enum(["viber", "telegram", "whatsapp"]),
   }),
   delivery: z.discriminatedUnion("carrier", [npDeliverySchema, upDeliverySchema]),
   items: z.array(
@@ -112,12 +113,15 @@ export async function POST(req: NextRequest) {
         `Адреса: ${delivery.streetAddress ?? ""}`
     }
 
+    const messengerLabel = { viber: "Viber", telegram: "Telegram", whatsapp: "WhatsApp" }
+
     const message =
       `🛍 Нове замовлення #${orderNumber}\n\n` +
       `👤 Клієнт\n` +
       `Імʼя: ${customer.name}\n` +
       `Телефон: ${customer.phone}\n` +
-      `Email: ${customer.email}\n\n` +
+      `Email: ${customer.email}\n` +
+      `Месенджер: ${messengerLabel[customer.messenger]}\n\n` +
       `📦 Доставка\n${deliveryText}\n\n` +
       `🛒 Товари\n${itemsList}\n\n` +
       `💰 Сума: ${totalAmount} грн\n` +
