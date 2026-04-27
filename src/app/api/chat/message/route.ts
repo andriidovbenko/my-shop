@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { writeClient, client } from "@/lib/sanity/client"
-import { sendMessageToTopic } from "@/lib/telegram"
+import { sendMessageToTopic, sendTelegramMessage } from "@/lib/telegram"
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
       .append("messages", [{ _key: crypto.randomUUID(), role: "user", text: text.trim(), timestamp }])
       .commit()
 
+    const groupNumericId = process.env.TELEGRAM_SUPPORT_GROUP_ID?.replace("-100", "")
+    const topicLink = `https://t.me/c/${groupNumericId}/${session.topicId}`
     sendMessageToTopic(session.topicId, text.trim())
+    sendTelegramMessage(`💬 Нове повідомлення в чаті:\n${text.trim()}\n\n👉 ${topicLink}`)
 
     return NextResponse.json({ ok: true, timestamp })
   } catch (err) {
