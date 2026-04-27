@@ -31,7 +31,8 @@ export const order = defineType({
       title: "Customer",
       type: "object",
       fields: [
-        { name: "name", type: "string", title: "Name" },
+        { name: "firstName", type: "string", title: "First Name" },
+        { name: "lastName", type: "string", title: "Last Name" },
         { name: "email", type: "string", title: "Email" },
         { name: "phone", type: "string", title: "Phone" },
         { name: "messenger", type: "string", title: "Preferred Messenger" },

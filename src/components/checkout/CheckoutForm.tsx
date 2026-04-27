@@ -13,9 +13,6 @@ import {
   Button,
   Divider,
   Text,
-  RadioGroup,
-  Radio,
-  Stack,
 } from "@chakra-ui/react"
 import Link from "next/link"
 import { z } from "zod"
@@ -23,9 +20,11 @@ import { useCart } from "@/context/CartContext"
 import { DeliverySelector, type DeliveryValue } from "./DeliverySelector"
 import { routes } from "@/lib/routes"
 import type { MessengerType } from "@/types"
+import { FaViber, FaTelegramPlane, FaWhatsapp } from "react-icons/fa"
 
 const customerSchema = z.object({
-  name: z.string().min(2, "Мінімум 2 символи"),
+  firstName: z.string().min(2, "Мінімум 2 символи"),
+  lastName: z.string().min(2, "Мінімум 2 символи"),
   email: z.string().email("Невірний формат email"),
   phone: z.string().regex(/^\+380\d{9}$/, "Формат: +380XXXXXXXXX"),
   messenger: z.enum(["viber", "telegram", "whatsapp"], { message: "Оберіть месенджер" }),
@@ -47,11 +46,26 @@ const emptyDelivery: DeliveryValue = {
   streetAddress: "",
 }
 
+const MESSENGERS: { value: MessengerType; label: string; Icon: React.ElementType; color: string }[] = [
+  { value: "viber", label: "Viber", Icon: FaViber, color: "#7360F2" },
+  { value: "telegram", label: "Telegram", Icon: FaTelegramPlane, color: "#2AABEE" },
+  { value: "whatsapp", label: "WhatsApp", Icon: FaWhatsapp, color: "#25D366" },
+]
+
+const CARD_PROPS = {
+  p: 6,
+  borderWidth: "1px" as const,
+  borderColor: "border.default",
+  borderRadius: "card",
+  bg: "white",
+  shadow: "card",
+}
+
 export function CheckoutForm() {
   const router = useRouter()
   const { items, totalPrice } = useCart()
 
-  const [customer, setCustomer] = useState<CustomerFields>({ name: "", email: "", phone: "", messenger: "viber" })
+  const [customer, setCustomer] = useState<CustomerFields>({ firstName: "", lastName: "", email: "", phone: "", messenger: "viber" })
   const [delivery, setDelivery] = useState<DeliveryValue>(emptyDelivery)
   const [customerErrors, setCustomerErrors] = useState<CustomerErrors>({})
   const [deliveryErrors, setDeliveryErrors] = useState<DeliveryErrors>({})
@@ -122,7 +136,7 @@ export function CheckoutForm() {
       }
 
       router.push(
-        `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&name=${encodeURIComponent(customer.name)}&total=${totalPrice}`
+        `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&name=${encodeURIComponent(customer.firstName)}&total=${totalPrice}`
       )
     } catch {
       setServerError("Помилка мережі. Спробуйте ще раз.")
@@ -144,28 +158,43 @@ export function CheckoutForm() {
 
   return (
     <Box as="form" onSubmit={handleSubmit}>
-      <Box display={{ base: "block", lg: "flex" }} gap={10} alignItems="start">
+      <Box display={{ base: "block", lg: "flex" }} gap={8} alignItems="start">
         {/* Left: customer + delivery */}
-        <VStack flex="1" align="stretch" gap={6}>
-          <Box>
-            <Heading as="h2" size="md" mb={4} color="text.default">
+        <VStack flex="1" align="stretch" gap={5}>
+
+          {/* Contact section */}
+          <Box {...CARD_PROPS}>
+            <Heading as="h2" size="md" mb={5} color="text.default">
               Контактні дані
             </Heading>
             <VStack gap={4}>
-              <FormControl isInvalid={!!customerErrors.name}>
-                <FormLabel color="text.default">Імʼя та прізвище</FormLabel>
-                <Input
-                  value={customer.name}
-                  onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                  placeholder="Іван Іваненко"
-                  borderColor="border.default"
-                  _focus={{ borderColor: "accent.default", boxShadow: "none" }}
-                />
-                <FormErrorMessage>{customerErrors.name}</FormErrorMessage>
-              </FormControl>
+              <HStack gap={4} align="start" w="full">
+                <FormControl isInvalid={!!customerErrors.firstName}>
+                  <FormLabel color="text.default" fontSize="sm" fontWeight="500">Імʼя</FormLabel>
+                  <Input
+                    value={customer.firstName}
+                    onChange={(e) => setCustomer({ ...customer, firstName: e.target.value })}
+                    placeholder="Іван"
+                    borderColor="border.default"
+                    _focus={{ borderColor: "accent.default", boxShadow: "none" }}
+                  />
+                  <FormErrorMessage>{customerErrors.firstName}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={!!customerErrors.lastName}>
+                  <FormLabel color="text.default" fontSize="sm" fontWeight="500">Прізвище</FormLabel>
+                  <Input
+                    value={customer.lastName}
+                    onChange={(e) => setCustomer({ ...customer, lastName: e.target.value })}
+                    placeholder="Іваненко"
+                    borderColor="border.default"
+                    _focus={{ borderColor: "accent.default", boxShadow: "none" }}
+                  />
+                  <FormErrorMessage>{customerErrors.lastName}</FormErrorMessage>
+                </FormControl>
+              </HStack>
 
               <FormControl isInvalid={!!customerErrors.email}>
-                <FormLabel color="text.default">Email</FormLabel>
+                <FormLabel color="text.default" fontSize="sm" fontWeight="500">Email</FormLabel>
                 <Input
                   type="email"
                   value={customer.email}
@@ -178,7 +207,7 @@ export function CheckoutForm() {
               </FormControl>
 
               <FormControl isInvalid={!!customerErrors.phone}>
-                <FormLabel color="text.default">Телефон</FormLabel>
+                <FormLabel color="text.default" fontSize="sm" fontWeight="500">Телефон</FormLabel>
                 <Input
                   type="tel"
                   value={customer.phone}
@@ -191,30 +220,52 @@ export function CheckoutForm() {
               </FormControl>
 
               <FormControl isInvalid={!!customerErrors.messenger}>
-                <FormLabel color="text.default">Зручний месенджер для зв&apos;язку</FormLabel>
-                <RadioGroup
-                  value={customer.messenger}
-                  onChange={(v) => setCustomer({ ...customer, messenger: v as MessengerType })}
-                >
-                  <Stack direction="row" gap={5}>
-                    <Radio value="viber" borderColor="border.default">
-                      <Text color="text.default">Viber</Text>
-                    </Radio>
-                    <Radio value="telegram" borderColor="border.default">
-                      <Text color="text.default">Telegram</Text>
-                    </Radio>
-                    <Radio value="whatsapp" borderColor="border.default">
-                      <Text color="text.default">WhatsApp</Text>
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
+                <FormLabel color="text.default" fontSize="sm" fontWeight="500" mb={3}>
+                  Зручний месенджер для зв&apos;язку
+                </FormLabel>
+                <HStack gap={3}>
+                  {MESSENGERS.map(({ value, label, Icon, color }) => {
+                    const selected = customer.messenger === value
+                    return (
+                      <Box
+                        key={value}
+                        as="button"
+                        type="button"
+                        onClick={() => setCustomer({ ...customer, messenger: value })}
+                        flex={1}
+                        py={4}
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        gap={2}
+                        borderWidth="2px"
+                        borderColor={selected ? color : "gray.200"}
+                        borderRadius="xl"
+                        bg={selected ? `${color}12` : "white"}
+                        cursor="pointer"
+                        transition="all 0.15s"
+                        _hover={{ borderColor: color }}
+                      >
+                        <Icon color={color} size={26} />
+                        <Text
+                          fontSize="xs"
+                          fontWeight={selected ? "600" : "400"}
+                          color={selected ? "gray.800" : "gray.500"}
+                        >
+                          {label}
+                        </Text>
+                      </Box>
+                    )
+                  })}
+                </HStack>
                 <FormErrorMessage>{customerErrors.messenger}</FormErrorMessage>
               </FormControl>
             </VStack>
           </Box>
 
-          <Box>
-            <Heading as="h2" size="md" mb={4} color="text.default">
+          {/* Delivery section */}
+          <Box {...CARD_PROPS}>
+            <Heading as="h2" size="md" mb={5} color="text.default">
               Доставка
             </Heading>
             <DeliverySelector
@@ -228,14 +279,11 @@ export function CheckoutForm() {
         {/* Right: order summary */}
         <Box
           w={{ base: "full", lg: "340px" }}
-          mt={{ base: 8, lg: 0 }}
+          mt={{ base: 5, lg: 0 }}
           flexShrink={0}
-          p={6}
-          borderWidth="1px"
-          borderColor="border.default"
-          borderRadius="card"
-          bg="bg.card"
-          shadow="card"
+          position={{ lg: "sticky" }}
+          top={{ lg: "24px" }}
+          {...CARD_PROPS}
         >
           <Heading as="h2" size="md" mb={4} color="text.default">
             Ваше замовлення

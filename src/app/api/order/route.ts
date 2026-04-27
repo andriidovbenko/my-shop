@@ -23,7 +23,8 @@ const upDeliverySchema = z.object({
 
 const orderSchema = z.object({
   customer: z.object({
-    name: z.string().min(2),
+    firstName: z.string().min(2),
+    lastName: z.string().min(2),
     email: z.string().email(),
     phone: z.string().regex(/^\+380\d{9}$/),
     messenger: z.enum(["viber", "telegram", "whatsapp"]),
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
     const message =
       `🛍 Нове замовлення #${orderNumber}\n\n` +
       `👤 Клієнт\n` +
-      `Імʼя: ${customer.name}\n` +
+      `Імʼя: ${customer.firstName} ${customer.lastName}\n` +
       `Телефон: ${customer.phone}\n` +
       `Email: ${customer.email}\n` +
       `Месенджер: ${messengerLabel[customer.messenger]}\n\n` +

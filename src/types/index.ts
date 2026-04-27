@@ -54,7 +54,8 @@ export interface Order {
   orderNumber: string;
   status: OrderStatus;
   customer: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone: string;
     messenger: MessengerType;

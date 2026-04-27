@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import {
   Box,
+  HStack,
   FormControl,
   FormLabel,
   Input,
@@ -12,6 +13,7 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react"
+import Image from "next/image"
 import type { NPCity, NPWarehouse, DeliveryType, DeliveryCarrier, UkrposhtaMethod } from "@/types"
 
 export interface DeliveryValue {
@@ -33,6 +35,11 @@ interface Props {
   onChange: (value: DeliveryValue) => void
   errors?: Partial<Record<keyof DeliveryValue, string>>
 }
+
+const CARRIERS: { value: DeliveryCarrier; label: string; src: string; color: string }[] = [
+  { value: "novaposhta", label: "Нова Пошта", src: "/carriers/novaposhta.svg", color: "#E30613" },
+  { value: "ukrposhta", label: "Укрпошта", src: "/carriers/ukrposhta.svg.webp", color: "#F3C43C" },
+]
 
 export function DeliverySelector({ value, onChange, errors }: Props) {
   const [cityQuery, setCityQuery] = useState(value.carrier === "novaposhta" ? value.city : "")
@@ -119,17 +126,38 @@ export function DeliverySelector({ value, onChange, errors }: Props) {
     <Box>
       {/* Carrier selector */}
       <FormControl mb={5}>
-        <FormLabel color="text.default">Служба доставки</FormLabel>
-        <RadioGroup value={value.carrier} onChange={handleCarrierChange}>
-          <Stack direction="row" gap={6}>
-            <Radio value="novaposhta" borderColor="border.default">
-              <Text color="text.default">Нова Пошта</Text>
-            </Radio>
-            <Radio value="ukrposhta" borderColor="border.default">
-              <Text color="text.default">Укрпошта</Text>
-            </Radio>
-          </Stack>
-        </RadioGroup>
+        <FormLabel color="text.default" fontSize="sm" fontWeight="500">Служба доставки</FormLabel>
+        <HStack gap={3}>
+          {CARRIERS.map(({ value: carrierValue, label, src, color }) => {
+            const selected = value.carrier === carrierValue
+            return (
+              <Box
+                key={carrierValue}
+                as="button"
+                type="button"
+                onClick={() => handleCarrierChange(carrierValue)}
+                flex={1}
+                py={4}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                gap={2}
+                borderWidth="2px"
+                borderColor={selected ? color : "gray.200"}
+                borderRadius="xl"
+                bg={selected ? `${color}12` : "white"}
+                cursor="pointer"
+                transition="all 0.15s"
+                _hover={{ borderColor: color }}
+              >
+                <Image src={src} alt={label} width={40} height={40} style={{ height: "40px", width: "auto", objectFit: "contain" }} />
+                <Text fontSize="xs" fontWeight={selected ? "600" : "400"} color={selected ? "gray.800" : "gray.500"}>
+                  {label}
+                </Text>
+              </Box>
+            )
+          })}
+        </HStack>
       </FormControl>
 
       {/* ── Nova Poshta ── */}
@@ -172,7 +200,7 @@ export function DeliverySelector({ value, onChange, errors }: Props) {
           <FormControl mb={4}>
             <FormLabel color="text.default">Спосіб отримання</FormLabel>
             <RadioGroup value={value.deliveryType} onChange={handleNpDeliveryTypeChange}>
-              <Stack direction="row" gap={4}>
+              <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 4 }}>
                 <Radio value="warehouse" borderColor="border.default"><Text color="text.default">Відділення</Text></Radio>
                 <Radio value="postomat" borderColor="border.default"><Text color="text.default">Поштомат</Text></Radio>
                 <Radio value="courier" borderColor="border.default"><Text color="text.default">{"Кур'єр"}</Text></Radio>
@@ -253,7 +281,7 @@ export function DeliverySelector({ value, onChange, errors }: Props) {
           <FormControl mb={4}>
             <FormLabel color="text.default">Спосіб отримання</FormLabel>
             <RadioGroup value={value.deliveryMethod} onChange={handleUpDeliveryMethodChange}>
-              <Stack direction="row" gap={4}>
+              <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 4 }}>
                 <Radio value="post_office" borderColor="border.default"><Text color="text.default">Відділення</Text></Radio>
                 <Radio value="courier" borderColor="border.default"><Text color="text.default">{"Кур'єр (додому)"}</Text></Radio>
               </Stack>
