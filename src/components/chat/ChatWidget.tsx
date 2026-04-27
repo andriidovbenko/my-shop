@@ -19,18 +19,22 @@ interface Message {
 }
 
 const SESSION_KEY = "chat_session_id"
-const POLL_INTERVAL = 3000
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
   const [inputText, setInputText] = useState("")
   const [isSending, setIsSending] = useState(false)
   const [isStarting, setIsStarting] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const isOpenRef = useRef(false)
+  const knownKeysRef = useRef<Set<string>>(new Set())
+
+  useEffect(() => { isOpenRef.current = isOpen }, [isOpen])
 
   useEffect(() => {
     const stored = localStorage.getItem(SESSION_KEY)
@@ -41,15 +45,30 @@ export function ChatWidget() {
     try {
       const res = await fetch(`/api/chat/messages?sessionId=${sid}`)
       const data = await res.json()
-      if (Array.isArray(data.messages)) setMessages(data.messages)
+      if (!Array.isArray(data.messages)) return
+      const incoming: Message[] = data.messages
+
+      if (!isOpenRef.current) {
+        const newBotMessages = incoming.filter(
+          (m) => m.role === "bot" && !knownKeysRef.current.has(m._key)
+        )
+        if (newBotMessages.length > 0) {
+          setUnreadCount((c) => c + newBotMessages.length)
+        }
+      }
+
+      incoming.forEach((m) => knownKeysRef.current.add(m._key))
+      setMessages(incoming)
     } catch { /* silent */ }
   }, [])
 
+  // Poll at 3s when open, 15s when closed (to catch replies while closed)
   useEffect(() => {
-    if (isOpen && sessionId) {
-      fetchMessages(sessionId)
-      pollRef.current = setInterval(() => fetchMessages(sessionId), POLL_INTERVAL)
-    }
+    if (!sessionId) return
+    if (pollRef.current) clearInterval(pollRef.current)
+    const interval = isOpen ? 3000 : 15000
+    fetchMessages(sessionId)
+    pollRef.current = setInterval(() => fetchMessages(sessionId), interval)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
   }, [isOpen, sessionId, fetchMessages])
 
@@ -58,8 +77,12 @@ export function ChatWidget() {
   }, [messages])
 
   useEffect(() => {
-    if (isOpen) setTimeout(() => inputRef.current?.focus(), 100)
-  }, [isOpen])
+    if (isOpen) {
+      setUnreadCount(0)
+      messages.forEach((m) => knownKeysRef.current.add(m._key))
+      setTimeout(() => inputRef.current?.focus(), 100)
+    }
+  }, [isOpen, messages])
 
   const ensureSession = async (): Promise<string | null> => {
     if (sessionId) return sessionId
@@ -93,6 +116,7 @@ export function ChatWidget() {
       text,
       timestamp: new Date().toISOString(),
     }
+    knownKeysRef.current.add(optimistic._key)
     setMessages((prev) => [...prev, optimistic])
 
     try {
@@ -119,7 +143,8 @@ export function ChatWidget() {
           bottom="72px"
           right={0}
           w={{ base: "calc(100vw - 48px)", sm: "360px" }}
-          maxH="480px"
+          h={{ base: "70vh", sm: "auto" }}
+          maxH={{ base: "70vh", sm: "480px" }}
           display="flex"
           flexDirection="column"
           borderRadius="2xl"
@@ -130,13 +155,7 @@ export function ChatWidget() {
           bg="white"
         >
           {/* Header */}
-          <HStack
-            px={4}
-            py={3}
-            bg="accent.default"
-            justify="space-between"
-            flexShrink={0}
-          >
+          <HStack px={4} py={3} bg="accent.default" justify="space-between" flexShrink={0}>
             <VStack align="start" gap={0}>
               <Text color="white" fontWeight="700" fontSize="sm">Підтримка</Text>
               <Text color="whiteAlpha.800" fontSize="xs">Зазвичай відповідаємо за кілька хвилин</Text>
@@ -215,24 +234,49 @@ export function ChatWidget() {
       )}
 
       {/* Toggle button */}
-      <Box
-        as="button"
-        onClick={() => setIsOpen((v) => !v)}
-        w="56px"
-        h="56px"
-        borderRadius="full"
-        bg="accent.default"
-        color="white"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        boxShadow="0 4px 16px rgba(0,0,0,0.2)"
-        cursor="pointer"
-        transition="all 0.2s"
-        _hover={{ bg: "accent.hover", transform: "scale(1.05)" }}
-        aria-label={isOpen ? "Закрити чат" : "Відкрити чат"}
-      >
-        {isOpen ? <FaTimes size={20} /> : <FaCommentDots size={22} />}
+      <Box position="relative" display="inline-block">
+        <Box
+          as="button"
+          onClick={() => setIsOpen((v) => !v)}
+          w="56px"
+          h="56px"
+          borderRadius="full"
+          bg="accent.default"
+          color="white"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          boxShadow="0 4px 16px rgba(0,0,0,0.2)"
+          cursor="pointer"
+          transition="all 0.2s"
+          _hover={{ bg: "accent.hover", transform: "scale(1.05)" }}
+          aria-label={isOpen ? "Закрити чат" : "Відкрити чат"}
+        >
+          {isOpen ? <FaTimes size={20} /> : <FaCommentDots size={22} />}
+        </Box>
+
+        {/* Unread badge */}
+        {!isOpen && unreadCount > 0 && (
+          <Box
+            position="absolute"
+            top="-2px"
+            right="-2px"
+            minW="20px"
+            h="20px"
+            borderRadius="full"
+            bg="red.500"
+            color="white"
+            fontSize="11px"
+            fontWeight="700"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            px={1}
+            border="2px solid white"
+          >
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </Box>
+        )}
       </Box>
     </Box>
   )
