@@ -31,11 +31,15 @@ type CustomerErrors = Partial<Record<keyof CustomerFields, string>>
 type DeliveryErrors = Partial<Record<keyof DeliveryValue, string>>
 
 const emptyDelivery: DeliveryValue = {
+  carrier: "novaposhta",
   city: "",
   cityRef: "",
   deliveryType: "warehouse",
   warehouseRef: "",
   warehouseDescription: "",
+  deliveryMethod: "post_office",
+  postIndex: "",
+  streetAddress: "",
 }
 
 export function CheckoutForm() {
@@ -60,8 +64,18 @@ export function CheckoutForm() {
     }
 
     const newDeliveryErrors: DeliveryErrors = {}
-    if (!delivery.city) newDeliveryErrors.city = "Оберіть місто"
-    if (!delivery.warehouseRef) newDeliveryErrors.warehouseRef = "Оберіть відділення"
+    if (!delivery.city) newDeliveryErrors.city = "Вкажіть місто"
+    if (delivery.carrier === "novaposhta") {
+      if (delivery.deliveryType === "courier") {
+        if (!delivery.streetAddress.trim()) newDeliveryErrors.streetAddress = "Вкажіть адресу доставки"
+      } else {
+        if (!delivery.warehouseRef) newDeliveryErrors.warehouseRef = "Оберіть відділення"
+      }
+    } else {
+      if (!/^\d{5}$/.test(delivery.postIndex)) newDeliveryErrors.postIndex = "Введіть 5-значний індекс"
+      if (delivery.deliveryMethod === "courier" && !delivery.streetAddress.trim())
+        newDeliveryErrors.streetAddress = "Вкажіть адресу доставки"
+    }
 
     setCustomerErrors(newCustomerErrors)
     setDeliveryErrors(newDeliveryErrors)
@@ -175,7 +189,7 @@ export function CheckoutForm() {
 
           <Box>
             <Heading as="h2" size="md" mb={4} color="text.default">
-              Доставка Нова Пошта
+              Доставка
             </Heading>
             <DeliverySelector
               value={delivery}

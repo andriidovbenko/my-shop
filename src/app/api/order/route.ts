@@ -3,19 +3,31 @@ import { z } from "zod"
 import { createClient } from "next-sanity"
 import { sendTelegramMessage } from "@/lib/telegram"
 
+const npDeliverySchema = z.object({
+  carrier: z.literal("novaposhta"),
+  city: z.string().min(1),
+  cityRef: z.string().min(1),
+  deliveryType: z.enum(["warehouse", "postomat", "courier"]),
+  warehouseRef: z.string().optional(),
+  warehouseDescription: z.string().optional(),
+  streetAddress: z.string().optional(),
+})
+
+const upDeliverySchema = z.object({
+  carrier: z.literal("ukrposhta"),
+  city: z.string().min(1),
+  postIndex: z.string().regex(/^\d{5}$/),
+  deliveryMethod: z.enum(["post_office", "courier"]),
+  streetAddress: z.string().optional(),
+})
+
 const orderSchema = z.object({
   customer: z.object({
     name: z.string().min(2),
     email: z.string().email(),
     phone: z.string().regex(/^\+380\d{9}$/),
   }),
-  delivery: z.object({
-    city: z.string().min(1),
-    cityRef: z.string().min(1),
-    deliveryType: z.enum(["warehouse", "postomat"]),
-    warehouseRef: z.string().min(1),
-    warehouseDescription: z.string().min(1),
-  }),
+  delivery: z.discriminatedUnion("carrier", [npDeliverySchema, upDeliverySchema]),
   items: z.array(
     z.object({
       productId: z.string(),
@@ -70,10 +82,35 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
     })
 
-    const deliveryLabel = delivery.deliveryType === "warehouse" ? "Відділення" : "Поштомат"
     const itemsList = items
       .map((i) => `${i.name} x ${i.quantity} — ${i.price} грн`)
       .join("\n")
+
+    let deliveryText: string
+    if (delivery.carrier === "novaposhta" && delivery.deliveryType === "courier") {
+      deliveryText =
+        `Служба: Нова Пошта (Кур'єр)\n` +
+        `Місто: ${delivery.city}\n` +
+        `Адреса: ${delivery.streetAddress ?? ""}`
+    } else if (delivery.carrier === "novaposhta") {
+      const label = delivery.deliveryType === "warehouse" ? "Відділення" : "Поштомат"
+      deliveryText =
+        `Служба: Нова Пошта\n` +
+        `Місто: ${delivery.city}\n` +
+        `${label}: ${delivery.warehouseDescription ?? ""}`
+    } else if (delivery.deliveryMethod === "post_office") {
+      deliveryText =
+        `Служба: Укрпошта\n` +
+        `Місто: ${delivery.city}\n` +
+        `Індекс: ${delivery.postIndex}\n` +
+        `Спосіб: Відділення`
+    } else {
+      deliveryText =
+        `Служба: Укрпошта (Кур'єр)\n` +
+        `Місто: ${delivery.city}\n` +
+        `Індекс: ${delivery.postIndex}\n` +
+        `Адреса: ${delivery.streetAddress ?? ""}`
+    }
 
     const message =
       `🛍 Нове замовлення #${orderNumber}\n\n` +
@@ -81,9 +118,7 @@ export async function POST(req: NextRequest) {
       `Імʼя: ${customer.name}\n` +
       `Телефон: ${customer.phone}\n` +
       `Email: ${customer.email}\n\n` +
-      `📦 Доставка\n` +
-      `Місто: ${delivery.city}\n` +
-      `${deliveryLabel}: ${delivery.warehouseDescription}\n\n` +
+      `📦 Доставка\n${deliveryText}\n\n` +
       `🛒 Товари\n${itemsList}\n\n` +
       `💰 Сума: ${totalAmount} грн\n` +
       `💳 Оплата: IBAN`

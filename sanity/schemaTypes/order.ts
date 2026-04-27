@@ -41,11 +41,17 @@ export const order = defineType({
       title: "Delivery",
       type: "object",
       fields: [
+        { name: "carrier", type: "string", title: "Carrier" },
         { name: "city", type: "string", title: "City" },
-        { name: "cityRef", type: "string", title: "City Ref" },
-        { name: "deliveryType", type: "string", title: "Delivery Type" },
-        { name: "warehouseRef", type: "string", title: "Warehouse Ref" },
-        { name: "warehouseDescription", type: "string", title: "Warehouse Description" },
+        // Nova Poshta
+        { name: "cityRef", type: "string", title: "City Ref (NP)" },
+        { name: "deliveryType", type: "string", title: "Delivery Type (NP)" },
+        { name: "warehouseRef", type: "string", title: "Warehouse Ref (NP)" },
+        { name: "warehouseDescription", type: "string", title: "Warehouse (NP)" },
+        // Ukrposhta
+        { name: "deliveryMethod", type: "string", title: "Delivery Method (UP)" },
+        { name: "postIndex", type: "string", title: "Post Index (UP)" },
+        { name: "streetAddress", type: "string", title: "Street Address (UP courier)" },
       ],
     }),
     defineField({

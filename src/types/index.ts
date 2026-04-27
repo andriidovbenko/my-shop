@@ -44,7 +44,9 @@ export type OrderStatus =
   | "shipped"
   | "delivered";
 
-export type DeliveryType = "warehouse" | "postomat";
+export type DeliveryType = "warehouse" | "postomat" | "courier";
+export type DeliveryCarrier = "novaposhta" | "ukrposhta";
+export type UkrposhtaMethod = "post_office" | "courier";
 
 export interface Order {
   _id: string;
@@ -56,11 +58,17 @@ export interface Order {
     phone: string;
   };
   delivery: {
+    carrier: DeliveryCarrier;
     city: string;
-    cityRef: string;
-    deliveryType: DeliveryType;
-    warehouseRef: string;
-    warehouseDescription: string;
+    // Nova Poshta
+    cityRef?: string;
+    deliveryType?: DeliveryType;
+    warehouseRef?: string;
+    warehouseDescription?: string;
+    // Ukrposhta
+    postIndex?: string;
+    deliveryMethod?: UkrposhtaMethod;
+    streetAddress?: string;
   };
   items: Array<{
     productId: string;
@@ -84,3 +92,4 @@ export interface NPWarehouse {
   description: string;
   address: string;
 }
+
