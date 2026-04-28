@@ -22,6 +22,9 @@ export const metadata: Metadata = {
     locale: "uk_UA",
     siteName: SITE_NAME,
   },
+  alternates: {
+    canonical: SITE_URL,
+  },
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
