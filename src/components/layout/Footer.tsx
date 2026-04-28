@@ -103,21 +103,19 @@ export function Footer() {
                 💬 {telegram}
               </Box>
             )}
-            {!phone && !email && !telegram && (
-              <Box
-                as="button"
-                fontSize="sm"
-                color="whiteAlpha.700"
-                _hover={{ color: "white" }}
-                transition="color 0.15s"
-                onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
-                cursor="pointer"
-                textAlign="left"
-                py={0.5}
-              >
-                💬 Чат на сайті
-              </Box>
-            )}
+            <Box
+              as="button"
+              fontSize="sm"
+              color="whiteAlpha.700"
+              _hover={{ color: "white" }}
+              transition="color 0.15s"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
+              cursor="pointer"
+              textAlign="left"
+              py={0.5}
+            >
+              💬 Чат на сайті
+            </Box>
           </VStack>
         </SimpleGrid>
 
