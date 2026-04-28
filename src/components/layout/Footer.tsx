@@ -51,7 +51,19 @@ export function Footer() {
         </Flex>
 
         <Text fontSize="sm" color="text.muted" mt={6} textAlign="center">
-          {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "My Shop"}. All rights reserved.
+          🇺🇦{" "}
+          <Box
+            as="a"
+            href="https://drukar.me/hyz51d57"
+            target="_blank"
+            rel="noopener noreferrer"
+            color="text.muted"
+            _hover={{ color: "accent.default" }}
+          >
+            Друкуємо для ЗСУ безкоштовно
+          </Box>
+          {" "}·{" "}
+          {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "My Shop"}
         </Text>
       </Container>
     </Box>

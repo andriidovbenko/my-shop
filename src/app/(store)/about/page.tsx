@@ -102,6 +102,51 @@ export default function AboutPage() {
           </SimpleGrid>
         </Box>
 
+        {/* Army support */}
+        <Box mb={16}>
+          <Box
+            bg="dark.900"
+            color="white"
+            borderRadius="2xl"
+            p={{ base: 6, md: 8 }}
+            position="relative"
+            overflow="hidden"
+          >
+            <Box
+              position="absolute" inset={0}
+              bgGradient="linear(135deg, #1A8FE318 0%, transparent 50%, #F5821F22 100%)"
+              pointerEvents="none"
+              borderRadius="2xl"
+            />
+            <Box position="relative">
+              <Text fontSize="sm" fontWeight="600" color="#F5821F" letterSpacing="widest" textTransform="uppercase" mb={3}>
+                Підтримка армії
+              </Text>
+              <Heading as="h2" size="md" mb={3} fontWeight="800">
+                Друкуємо для ЗСУ безкоштовно
+              </Heading>
+              <Text color="whiteAlpha.800" lineHeight="tall" mb={5}>
+                Окрім комерційного магазину, ми беремо участь у волонтерській ініціативі{" "}
+                <Text
+                  as="a"
+                  href="https://drukar.me/hyz51d57"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="#1A8FE3"
+                  fontWeight="700"
+                  _hover={{ textDecoration: "underline" }}
+                >
+                  ДрукАрмія
+                </Text>
+                {" "}— і безкоштовно друкуємо вироби для потреб Збройних сил України. Надруковано вже понад 100 кг матеріалу на підтримку наших захисників.
+              </Text>
+              <Text color="whiteAlpha.600" fontSize="sm">
+                🇺🇦 Кожна ваша покупка в магазині опосередковано підтримує і цю місію.
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+
         {/* Payment & Delivery */}
         {(iban || recipient) && (
           <Box mb={16}>

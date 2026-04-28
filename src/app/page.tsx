@@ -25,7 +25,7 @@ const features = [
   {
     icon: "⚡",
     title: "Швидка відправка",
-    desc: "Відправляємо Новою Поштою протягом 1–2 робочих днів після оплати",
+    desc: "Відправляємо Новою Поштою або Укрпоштою протягом 1–2 робочих днів після оплати",
   },
   {
     icon: "✅",
@@ -193,6 +193,29 @@ export default async function HomePage() {
               </Flex>
             ))}
           </SimpleGrid>
+        </Container>
+      </Box>
+
+      {/* ДрукАрмія banner */}
+      <Box bg="#0D2137" py={3} borderBottomWidth="1px" borderColor="whiteAlpha.100">
+        <Container maxW="7xl">
+          <Flex justify="center" align="center" gap={2} wrap="wrap">
+            <Text fontSize="sm" color="whiteAlpha.900" textAlign="center">
+              🇺🇦 Безкоштовно друкуємо для ЗСУ у складі волонтерської ініціативи{" "}
+              <Box
+                as="a"
+                href="https://drukar.me/hyz51d57"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="#1A8FE3"
+                fontWeight="700"
+                _hover={{ textDecoration: "underline" }}
+              >
+                ДрукАрмія
+              </Box>
+              {" "}— понад 100 кг надруковано для захисників
+            </Text>
+          </Flex>
         </Container>
       </Box>
 
