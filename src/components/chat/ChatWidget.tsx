@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useRef, useCallback } from "react"
+import { usePathname } from "next/navigation"
 import {
   Box,
   VStack,
@@ -21,6 +22,12 @@ interface Message {
 const SESSION_KEY = "chat_session_id"
 
 export function ChatWidget() {
+  const pathname = usePathname()
+  if (pathname?.startsWith("/studio")) return null
+  return <ChatWidgetInner />
+}
+
+function ChatWidgetInner() {
   const [isOpen, setIsOpen] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
