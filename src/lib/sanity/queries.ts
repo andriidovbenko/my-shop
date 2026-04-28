@@ -1,5 +1,5 @@
 import { client } from "./client";
-import type { Product, Category } from "@/types";
+import type { Product, Category, ProductReview } from "@/types";
 
 export async function getAllProducts(): Promise<Product[]> {
   return client.fetch(`*[_type == "product" && inStock == true] {
@@ -60,6 +60,15 @@ export async function getSitemapProducts(): Promise<{ slug: string; updatedAt: s
 
 export async function getSitemapCategories(): Promise<{ slug: string }[]> {
   return client.fetch(`*[_type == "category"]{ "slug": slug.current }`);
+}
+
+export async function getProductReviews(productSlug: string): Promise<ProductReview[]> {
+  return client.fetch(
+    `*[_type == "productReview" && productSlug == $productSlug && approved == true] | order(createdAt desc) {
+      _id, author, rating, body, createdAt
+    }`,
+    { productSlug }
+  )
 }
 
 export async function getProductsBySlugs(slugs: string[]): Promise<Product[]> {

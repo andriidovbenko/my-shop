@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation"
 import { Container, Box, VStack, Heading, Text, Table, Tbody, Tr, Td, Badge, Divider } from "@chakra-ui/react"
-import { getProductBySlug, getAllProductSlugs } from "@/lib/sanity/queries"
+import { getProductBySlug, getAllProductSlugs, getProductReviews } from "@/lib/sanity/queries"
 import { urlFor } from "@/lib/sanity/image"
 import { buildTitle, truncate, SITE_URL } from "@/lib/metadata"
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs"
 import { ProductGallery } from "@/components/product/ProductGallery"
 import { ProductActions } from "@/components/product/ProductActions"
 import { PortableTextRenderer } from "@/components/ui/PortableTextRenderer"
+import { ReviewSection } from "@/components/product/ReviewSection"
 import { routes } from "@/lib/routes"
 import { TrackProductView } from "@/components/product/TrackProductView"
 import { RecentlyViewedProducts } from "@/components/catalog/RecentlyViewedProducts"
@@ -20,17 +21,37 @@ export async function generateStaticParams() {
   return slugs.map((s) => ({ slug: s.slug }))
 }
 
+type PortableTextSpan = { text?: string }
+
+function portableTextToPlain(blocks: PortableTextBlock[]): string {
+  if (!Array.isArray(blocks)) return ""
+  return blocks
+    .filter((b) => b._type === "block")
+    .map((b) => (b.children as PortableTextSpan[] | undefined)?.map((c) => c.text).join("") ?? "")
+    .join(" ")
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const product = await getProductBySlug(slug)
+  const [product, reviews] = await Promise.all([
+    getProductBySlug(slug),
+    getProductReviews(slug),
+  ])
   if (!product) return { title: buildTitle("Товар не знайдено") }
 
   const title = product.seo?.metaTitle || product.name
-  const description = product.seo?.metaDescription || truncate(portableTextToPlain(product.description), 160)
+  const baseDescription = product.seo?.metaDescription || truncate(portableTextToPlain(product.description), 140)
+  const avgRating =
+    reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : null
+  const description =
+    avgRating !== null
+      ? `${baseDescription} · Оцінка ${avgRating.toFixed(1)}/5 (${reviews.length} відгуків)`
+      : baseDescription
+
   const imageUrl = product.seo?.ogImage
     ? urlFor(product.seo.ogImage).width(1200).height(630).url()
     : product.images[0]
@@ -60,23 +81,16 @@ export async function generateMetadata({
   }
 }
 
-type PortableTextSpan = { text?: string }
-
-function portableTextToPlain(blocks: PortableTextBlock[]): string {
-  if (!Array.isArray(blocks)) return ""
-  return blocks
-    .filter((b) => b._type === "block")
-    .map((b) => (b.children as PortableTextSpan[] | undefined)?.map((c) => c.text).join("") ?? "")
-    .join(" ")
-}
-
 export default async function ProductPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const product = await getProductBySlug(slug)
+  const [product, reviews] = await Promise.all([
+    getProductBySlug(slug),
+    getProductReviews(slug),
+  ])
   if (!product) notFound()
 
   const seoDescription = product.seo?.metaDescription || truncate(portableTextToPlain(product.description), 160)
@@ -84,6 +98,9 @@ export default async function ProductPage({
   const imageUrls = product.images.map((img) =>
     urlFor(img.asset).width(800).height(800).url()
   )
+
+  const avgRating =
+    reviews.length > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : null
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -100,6 +117,29 @@ export default async function ProductPage({
         : "https://schema.org/OutOfStock",
       url: `${SITE_URL}/product/${slug}`,
     },
+    ...(avgRating !== null
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: avgRating.toFixed(1),
+            reviewCount: reviews.length,
+            bestRating: "5",
+            worstRating: "1",
+          },
+          review: reviews.slice(0, 5).map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: r.rating,
+              bestRating: "5",
+              worstRating: "1",
+            },
+            reviewBody: r.body,
+            datePublished: r.createdAt,
+          })),
+        }
+      : {}),
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -191,6 +231,8 @@ export default async function ProductPage({
             <ProductActions product={product} />
           </VStack>
         </Box>
+
+        <ReviewSection productSlug={product.slug.current} reviews={reviews} />
       </Container>
       <RecentlyViewedProducts currentSlug={product.slug.current} />
     </>

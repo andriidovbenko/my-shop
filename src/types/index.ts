@@ -96,3 +96,11 @@ export interface NPWarehouse {
   address: string;
 }
 
+export interface ProductReview {
+  _id: string;
+  author: string;
+  rating: number;
+  body: string;
+  createdAt: string;
+}
+
