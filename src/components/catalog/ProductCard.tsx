@@ -96,7 +96,7 @@ export function ProductCard({ product }: Props) {
       </Link>
       <VStack p={4} align="stretch" gap={2} flex="1">
         <Link href={routes.product(product.slug.current)} style={{ textDecoration: "none" }}>
-          <Text fontWeight="medium" color="text.default" _hover={{ color: "accent.default" }} noOfLines={2} flex="1">
+          <Text fontWeight="medium" color="text.default" _hover={{ color: "accent.default" }} noOfLines={2} minH="3em">
             {product.name}
           </Text>
         </Link>

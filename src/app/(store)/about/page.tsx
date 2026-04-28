@@ -15,7 +15,7 @@ const values = [
   {
     icon: "⚡",
     title: "Швидка відправка",
-    desc: "Всі товари в наявності — відправляємо Новою Поштою протягом 1–2 робочих днів.",
+    desc: "Всі товари в наявності — відправляємо Новою Поштою або Укрпоштою протягом 1–2 робочих днів.",
   },
   {
     icon: "🤝",
@@ -109,12 +109,12 @@ export default function AboutPage() {
               Оплата та доставка
             </Heading>
             <SimpleGrid columns={{ base: 1, sm: 2 }} gap={5}>
-              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5}>
+              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
                 <Flex align="center" gap={2} mb={4}>
                   <Text fontSize="xl">💳</Text>
                   <Text fontWeight="700" fontSize="sm" color="text.default">Оплата</Text>
                 </Flex>
-                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4}>
+                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
                   Банківський переказ на IBAN після оформлення замовлення
                 </Text>
                 <Divider borderColor="border.default" mb={4} />
@@ -134,13 +134,13 @@ export default function AboutPage() {
                 </VStack>
               </Box>
 
-              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5}>
+              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
                 <Flex align="center" gap={2} mb={4}>
                   <Text fontSize="xl">📦</Text>
                   <Text fontWeight="700" fontSize="sm" color="text.default">Доставка</Text>
                 </Flex>
-                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4}>
-                  Доставка Новою Поштою по всій Україні — на відділення або поштомат на ваш вибір
+                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
+                  Нова Пошта або Укрпошта — доставка по всій Україні на ваш вибір
                 </Text>
                 <Divider borderColor="border.default" mb={4} />
                 <VStack align="stretch" gap={2} fontSize="sm">
@@ -150,7 +150,7 @@ export default function AboutPage() {
                   </Box>
                   <Box>
                     <Text color="text.muted" fontSize="xs" mb={0.5}>Вартість доставки</Text>
-                    <Text color="text.default" fontWeight="500">За тарифами Нової Пошти</Text>
+                    <Text color="text.default" fontWeight="500">За тарифами перевізника</Text>
                   </Box>
                 </VStack>
               </Box>
