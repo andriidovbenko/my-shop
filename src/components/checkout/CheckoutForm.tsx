@@ -13,6 +13,7 @@ import {
   Button,
   Divider,
   Text,
+  Checkbox,
 } from "@chakra-ui/react"
 import Link from "next/link"
 import { z } from "zod"
@@ -71,6 +72,25 @@ export function CheckoutForm() {
   const [deliveryErrors, setDeliveryErrors] = useState<DeliveryErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [serverError, setServerError] = useState("")
+  const [offerAccepted, setOfferAccepted] = useState(false)
+  const [offerError, setOfferError] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const isFormValid = (): boolean => {
+    if (!customerSchema.safeParse(customer).success) return false
+    if (!delivery.city) return false
+    if (delivery.carrier === "novaposhta") {
+      if (delivery.deliveryType === "courier") {
+        if (!delivery.streetAddress.trim()) return false
+      } else {
+        if (!delivery.warehouseRef) return false
+      }
+    } else {
+      if (!/^\d{5}$/.test(delivery.postIndex)) return false
+      if (delivery.deliveryMethod === "courier" && !delivery.streetAddress.trim()) return false
+    }
+    return offerAccepted
+  }
 
   const validate = (): boolean => {
     const customerResult = customerSchema.safeParse(customer)
@@ -99,14 +119,18 @@ export function CheckoutForm() {
     setCustomerErrors(newCustomerErrors)
     setDeliveryErrors(newDeliveryErrors)
 
+    if (!offerAccepted) setOfferError(true)
+
     return (
       Object.keys(newCustomerErrors).length === 0 &&
-      Object.keys(newDeliveryErrors).length === 0
+      Object.keys(newDeliveryErrors).length === 0 &&
+      offerAccepted
     )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitted(true)
     if (!validate()) return
 
     setIsSubmitting(true)
@@ -308,6 +332,33 @@ export function CheckoutForm() {
             </Text>
           </HStack>
 
+          <FormControl isInvalid={offerError} mb={4}>
+            <Checkbox
+              isChecked={offerAccepted}
+              onChange={(e) => {
+                setOfferAccepted(e.target.checked)
+                if (e.target.checked) setOfferError(false)
+              }}
+              colorScheme="brand"
+              alignItems="flex-start"
+            >
+              <Text fontSize="sm" color="text.default" lineHeight="1.4">
+                Я ознайомився(-лась) та погоджуюсь з умовами{" "}
+                <Text
+                  as={Link}
+                  href={routes.offer}
+                  target="_blank"
+                  color="accent.default"
+                  textDecoration="underline"
+                  _hover={{ color: "accent.hover" }}
+                >
+                  публічної оферти
+                </Text>
+              </Text>
+            </Checkbox>
+            <FormErrorMessage>Необхідно погодитися з умовами оферти</FormErrorMessage>
+          </FormControl>
+
           {serverError && (
             <Text color="red.500" fontSize="sm" mb={3}>{serverError}</Text>
           )}
@@ -320,6 +371,7 @@ export function CheckoutForm() {
             size="lg"
             w="full"
             isLoading={isSubmitting}
+            isDisabled={submitted && !isFormValid()}
             loadingText="Оформлення..."
           >
             Підтвердити замовлення
