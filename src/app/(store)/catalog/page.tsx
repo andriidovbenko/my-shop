@@ -19,14 +19,21 @@ export async function generateMetadata({
   const { category } = await searchParams
   const categories = await getAllCategories()
   const activeCat = category ? categories.find((c) => c.slug.current === category) : null
-  const description = activeCat?.name ?? process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Каталог товарів"
+  const canonicalUrl = category ? `${SITE_URL}/catalog?category=${category}` : `${SITE_URL}/catalog`
+  const description = activeCat
+    ? `${activeCat.name} — 3D-друковані вироби в наявності. Замовляйте онлайн з доставкою по Україні.`
+    : "Каталог 3D-друкованих виробів — декор, аксесуари, домашні речі. Все в наявності та готове до відправки по всій Україні."
+  const title = activeCat ? `${activeCat.name} — каталог` : "Каталог"
   return {
-    title: buildTitle("Каталог"),
+    title: buildTitle(title),
     description,
     openGraph: {
-      title: buildTitle("Каталог"),
+      title: buildTitle(title),
       description,
-      url: category ? `${SITE_URL}/catalog?category=${category}` : `${SITE_URL}/catalog`,
+      url: canonicalUrl,
+    },
+    alternates: {
+      canonical: canonicalUrl,
     },
   }
 }

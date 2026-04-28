@@ -1,9 +1,11 @@
 import { Container, Heading, Text, VStack } from "@chakra-ui/react"
-import { buildTitle } from "@/lib/metadata"
+import { buildTitle, SITE_URL } from "@/lib/metadata"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: buildTitle("Політика конфіденційності"),
+  description: "Політика конфіденційності магазину 3Dиво — як ми збираємо, зберігаємо та захищаємо ваші персональні дані.",
+  alternates: { canonical: `${SITE_URL}/privacy` },
 }
 
 export default function PrivacyPage() {

@@ -1,9 +1,11 @@
 import { Container, Heading, Text, VStack } from "@chakra-ui/react"
-import { buildTitle } from "@/lib/metadata"
+import { buildTitle, SITE_URL } from "@/lib/metadata"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: buildTitle("Публічна оферта"),
+  description: "Публічна оферта магазину 3Dиво — умови продажу та доставки товарів з 3D-друку по Україні.",
+  alternates: { canonical: `${SITE_URL}/offer` },
 }
 
 export default function OfferPage() {

@@ -22,8 +22,9 @@ export const metadata: Metadata = {
     locale: "uk_UA",
     siteName: SITE_NAME,
   },
-  alternates: {
-    canonical: SITE_URL,
+  twitter: {
+    card: "summary_large_image",
+    site: "@3dyvo",
   },
   icons: {
     icon: "/favicon.png",
@@ -40,9 +41,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/favicon.png`,
+    description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION,
+    telephone: process.env.NEXT_PUBLIC_CONTACT_PHONE,
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "UA",
+    },
+  };
+
   return (
     <html lang="uk" className={inter.variable}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
         <ClientProviders>
           {children}
         </ClientProviders>

@@ -1,9 +1,18 @@
 import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex, Divider } from "@chakra-ui/react"
-import { buildTitle } from "@/lib/metadata"
+import { buildTitle, SITE_URL } from "@/lib/metadata"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: buildTitle("Про нас"),
+  description: "3Dиво — магазин унікальних виробів з 3D-друку в Україні. Контроль якості, швидка відправка, підтримка ЗСУ у складі ініціативи ДрукАрмія.",
+  openGraph: {
+    title: "Про нас | 3Dиво",
+    description: "3Dиво — магазин унікальних виробів з 3D-друку в Україні. Контроль якості, швидка відправка, підтримка ЗСУ.",
+    url: `${SITE_URL}/about`,
+  },
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
 }
 
 const values = [

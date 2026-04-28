@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: buildTitle("Оформлення замовлення"),
+  robots: { index: false, follow: false },
 }
 
 export default function CheckoutPage() {

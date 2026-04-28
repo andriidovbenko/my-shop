@@ -5,13 +5,22 @@ import { getAllProducts, getAllCategories } from "@/lib/sanity/queries"
 import { ProductGrid } from "@/components/catalog/ProductGrid"
 import { LinkButton } from "@/components/ui/LinkButton"
 import { urlFor } from "@/lib/sanity/image"
-import { buildTitle } from "@/lib/metadata"
+import { SITE_URL } from "@/lib/metadata"
 import { Printer3DIcon } from "@/components/icons/Printer3DIcon"
 import { routes } from "@/lib/routes"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: buildTitle("Головна"),
+  title: { absolute: "3Dиво — магазин 3D-виробів в Україні" },
+  description: "Унікальні вироби з 3D-друку в наявності — декор, аксесуари, корисні речі. Замовляйте онлайн з доставкою Новою Поштою по всій Україні.",
+  openGraph: {
+    title: "3Dиво — магазин 3D-виробів в Україні",
+    description: "Унікальні вироби з 3D-друку в наявності. Замовляйте онлайн з доставкою по всій Україні.",
+    url: SITE_URL,
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 }
 
 export const revalidate = 3600
