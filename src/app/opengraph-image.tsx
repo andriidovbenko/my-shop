@@ -4,12 +4,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 export const alt = "3Dиво — магазин 3D-виробів в Україні"
 
-export default async function Image() {
-  const fontRes = await fetch(
-    "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff"
-  )
-  const fontData = await fontRes.arrayBuffer()
-
+export default function Image() {
   return new ImageResponse(
     (
       <div
@@ -21,7 +16,6 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "Inter",
           position: "relative",
         }}
       >
@@ -37,7 +31,7 @@ export default async function Image() {
           }}
         />
 
-        {/* Blue glow blob */}
+        {/* Blue glow */}
         <div
           style={{
             position: "absolute",
@@ -47,12 +41,12 @@ export default async function Image() {
             height: "400px",
             borderRadius: "50%",
             background: "#1A8FE3",
-            opacity: 0.07,
+            opacity: 0.08,
             filter: "blur(80px)",
           }}
         />
 
-        {/* Orange glow blob */}
+        {/* Orange glow */}
         <div
           style={{
             position: "absolute",
@@ -67,7 +61,7 @@ export default async function Image() {
           }}
         />
 
-        {/* Site name */}
+        {/* Brand name */}
         <div
           style={{
             display: "flex",
@@ -75,22 +69,20 @@ export default async function Image() {
             marginBottom: "24px",
           }}
         >
-          <span style={{ fontSize: "96px", fontWeight: 800, color: "#1A8FE3" }}>3D</span>
-          <span style={{ fontSize: "96px", fontWeight: 800, color: "#F5821F" }}>иво</span>
+          <span style={{ fontSize: "120px", fontWeight: 900, color: "#1A8FE3", lineHeight: 1 }}>3D</span>
+          <span style={{ fontSize: "120px", fontWeight: 900, color: "#F5821F", lineHeight: 1 }}>yvo</span>
         </div>
 
         {/* Tagline */}
         <div
           style={{
             fontSize: "30px",
-            color: "rgba(255,255,255,0.65)",
+            color: "rgba(255,255,255,0.6)",
             textAlign: "center",
-            maxWidth: "760px",
-            lineHeight: 1.4,
             marginBottom: "48px",
           }}
         >
-          Унікальні вироби з 3D-друку — готові до відправки по всій Україні
+          3D printing shop · Ukraine
         </div>
 
         {/* Pills */}
@@ -105,7 +97,7 @@ export default async function Image() {
               fontWeight: 600,
             }}
           >
-            В наявності
+            In stock
           </div>
           <div
             style={{
@@ -117,26 +109,23 @@ export default async function Image() {
               fontWeight: 600,
             }}
           >
-            Швидка відправка
+            Fast shipping
           </div>
           <div
             style={{
               border: "2px solid rgba(255,255,255,0.15)",
-              color: "rgba(255,255,255,0.6)",
+              color: "rgba(255,255,255,0.5)",
               padding: "12px 28px",
               borderRadius: "100px",
               fontSize: "20px",
               fontWeight: 600,
             }}
           >
-            Доставка по Україні
+            Nova Poshta
           </div>
         </div>
       </div>
     ),
-    {
-      ...size,
-      fonts: [{ name: "Inter", data: fontData, style: "normal", weight: 800 }],
-    }
+    size
   )
 }
