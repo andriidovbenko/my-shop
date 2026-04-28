@@ -44,6 +44,12 @@ function ChatWidgetInner() {
   useEffect(() => { isOpenRef.current = isOpen }, [isOpen])
 
   useEffect(() => {
+    const handler = () => setIsOpen(true)
+    window.addEventListener("open-chat", handler)
+    return () => window.removeEventListener("open-chat", handler)
+  }, [])
+
+  useEffect(() => {
     const stored = localStorage.getItem(SESSION_KEY)
     if (stored) setSessionId(stored)
   }, [])
