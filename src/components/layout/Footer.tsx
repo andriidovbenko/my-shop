@@ -1,4 +1,5 @@
-import { Box, Container, Flex, Text, VStack, Divider, SimpleGrid } from "@chakra-ui/react";
+import { Box, Container, Flex, Text, VStack, Divider, SimpleGrid, Icon } from "@chakra-ui/react";
+import { FaYoutube, FaInstagram, FaTiktok } from "react-icons/fa6";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 
@@ -23,6 +24,38 @@ export function Footer() {
             <Text fontSize="sm" color="whiteAlpha.600" lineHeight="tall" maxW="220px">
               Унікальні вироби з 3D-друку — готові до відправки по всій Україні
             </Text>
+            {/* Social links */}
+            <Flex gap={3} mt={1}>
+              {[
+                { href: "https://youtube.com/@3dyvo", label: "YouTube", icon: FaYoutube },
+                { href: "https://www.instagram.com/3dyvo.com.ua", label: "Instagram", icon: FaInstagram },
+                { href: "https://www.tiktok.com/@3dyvo", label: "TikTok", icon: FaTiktok },
+              ].map(({ href, label, icon }) => (
+                <Box
+                  key={label}
+                  as="a"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  display="inline-flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  w="36px"
+                  h="36px"
+                  borderRadius="full"
+                  border="1px solid"
+                  borderColor="whiteAlpha.200"
+                  color="whiteAlpha.700"
+                  fontSize="lg"
+                  _hover={{ borderColor: "#1A8FE3", color: "white", bg: "whiteAlpha.100" }}
+                  transition="all 0.2s"
+                >
+                  <Icon as={icon} />
+                </Box>
+              ))}
+            </Flex>
+
             {/* ДрукАрмія badge */}
             <Box
               as="a"

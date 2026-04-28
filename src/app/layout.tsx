@@ -53,6 +53,11 @@ export default function RootLayout({
       "@type": "PostalAddress",
       addressCountry: "UA",
     },
+    sameAs: [
+      "https://youtube.com/@3dyvo",
+      "https://www.instagram.com/3dyvo.com.ua",
+      "https://www.tiktok.com/@3dyvo",
+    ],
   };
 
   return (

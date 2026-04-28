@@ -121,7 +121,9 @@ export async function POST(req: NextRequest) {
       `💰 Сума: ${totalAmount} грн\n` +
       `💳 Оплата: IBAN`
 
-    // Non-blocking — order is already saved
+    // TODO: Sanity order storage can be removed once confirmed stable —
+    // all order data is already sent to Telegram. If removed, await this call
+    // and return an error to the customer on failure (Telegram becomes single source of truth).
     sendTelegramMessage(message)
 
     return NextResponse.json({ orderNumber })

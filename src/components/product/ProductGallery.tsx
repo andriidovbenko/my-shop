@@ -66,7 +66,7 @@ export function ProductGallery({ images, productName }: Props) {
           sx={{ "&:hover img": { transform: "scale(1.03)" } }}
         >
           <NextImage
-            src={urlFor(active.asset).width(600).height(600).url()}
+            src={urlFor(active.asset).width(800).url()}
             alt={active.alt || productName}
             fill
             style={{ objectFit: "cover", transition: "transform 0.3s ease" }}
@@ -166,7 +166,7 @@ export function ProductGallery({ images, productName }: Props) {
             >
               <NextImage
                 key={lightboxIndex}
-                src={urlFor(lightboxImage.asset).width(1200).height(1200).url()}
+                src={urlFor(lightboxImage.asset).width(1200).url()}
                 alt={lightboxImage.alt || productName}
                 fill
                 style={{ objectFit: "contain" }}
