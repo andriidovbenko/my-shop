@@ -73,6 +73,12 @@ export const product = defineType({
       ],
     }),
     defineField({
+      name: "youtubeUrl",
+      title: "YouTube відео",
+      type: "url",
+      description: "Посилання на YouTube відео (наприклад: https://youtu.be/xxx або https://www.youtube.com/watch?v=xxx)",
+    }),
+    defineField({
       name: "seo",
       title: "SEO",
       type: "object",

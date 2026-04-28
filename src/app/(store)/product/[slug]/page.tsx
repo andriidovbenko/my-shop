@@ -11,6 +11,7 @@ import { ReviewSection } from "@/components/product/ReviewSection"
 import { routes } from "@/lib/routes"
 import { TrackProductView } from "@/components/product/TrackProductView"
 import { RecentlyViewedProducts } from "@/components/catalog/RecentlyViewedProducts"
+import { YouTubeEmbed } from "@/components/product/YouTubeEmbed"
 import type { Metadata } from "next"
 import type { PortableTextBlock } from "@portabletext/react"
 
@@ -233,6 +234,9 @@ export default async function ProductPage({
         </Box>
 
         <ReviewSection productSlug={product.slug.current} reviews={reviews} />
+        {product.youtubeUrl && (
+          <YouTubeEmbed url={product.youtubeUrl} title={product.name} />
+        )}
       </Container>
       <RecentlyViewedProducts currentSlug={product.slug.current} />
     </>

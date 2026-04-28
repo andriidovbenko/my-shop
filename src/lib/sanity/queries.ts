@@ -25,6 +25,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     category->{_id, name, slug},
     inStock,
     attributes,
+    youtubeUrl,
     seo
   }`, { slug });
 }

@@ -14,6 +14,7 @@ export interface Product {
   category?: Category;
   inStock: boolean;
   attributes: Array<{ key: string; value: string }>;
+  youtubeUrl?: string;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
