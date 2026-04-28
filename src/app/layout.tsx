@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     locale: "uk_UA",
     siteName: SITE_NAME,
   },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   robots: {
     index: true,
     follow: true,
