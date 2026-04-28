@@ -2,6 +2,11 @@ import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
+  const secret = request.nextUrl.searchParams.get("secret")
+  if (process.env.REVALIDATE_SECRET && secret !== process.env.REVALIDATE_SECRET) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   try {
     const body = await request.json()
     const { _type } = body

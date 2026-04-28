@@ -2,15 +2,15 @@ import { defineType, defineField } from "sanity"
 
 export const productReview = defineType({
   name: "productReview",
-  title: "Product Review",
+  title: "Відгук",
   type: "document",
   fields: [
-    defineField({ name: "productSlug", type: "string", title: "Product Slug" }),
-    defineField({ name: "author", type: "string", title: "Author Name" }),
-    defineField({ name: "rating", type: "number", title: "Rating (1–5)" }),
-    defineField({ name: "body", type: "text", title: "Comment" }),
-    defineField({ name: "approved", type: "boolean", title: "Approved", initialValue: true }),
-    defineField({ name: "createdAt", type: "datetime", title: "Created At" }),
+    defineField({ name: "productSlug", type: "string", title: "Slug товару" }),
+    defineField({ name: "author", type: "string", title: "Автор" }),
+    defineField({ name: "rating", type: "number", title: "Оцінка (1–5)" }),
+    defineField({ name: "body", type: "text", title: "Коментар" }),
+    defineField({ name: "approved", type: "boolean", title: "Підтверджено", initialValue: true }),
+    defineField({ name: "createdAt", type: "datetime", title: "Дата" }),
   ],
   preview: {
     select: { title: "author", subtitle: "productSlug" },

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { createClient } from "next-sanity"
+import { writeClient } from "@/lib/sanity/client"
 import { sendTelegramMessage } from "@/lib/telegram"
 
 const npDeliverySchema = z.object({
@@ -48,13 +48,6 @@ function generateOrderNumber(): string {
   return `UA-${date}-${rand}`
 }
 
-const sanityWriteClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: "2024-01-01",
-  token: process.env.SANITY_API_TOKEN,
-  useCdn: false,
-})
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,7 +60,7 @@ export async function POST(req: NextRequest) {
     const { customer, delivery, items, totalAmount } = parsed.data
     const orderNumber = generateOrderNumber()
 
-    await sanityWriteClient.create({
+    await writeClient.create({
       _type: "order",
       orderNumber,
       status: "pending_payment",

@@ -2,12 +2,12 @@ import { defineType, defineField } from "sanity"
 
 export const product = defineType({
   name: "product",
-  title: "Product",
+  title: "Товар",
   type: "document",
   fields: [
     defineField({
       name: "name",
-      title: "Name",
+      title: "Назва",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -20,26 +20,26 @@ export const product = defineType({
     }),
     defineField({
       name: "description",
-      title: "Description",
+      title: "Опис",
       type: "array",
       of: [{ type: "block" }],
     }),
     defineField({
       name: "price",
-      title: "Price (UAH)",
+      title: "Ціна (грн)",
       type: "number",
       validation: (Rule) => Rule.required().positive(),
     }),
     defineField({
       name: "images",
-      title: "Images",
+      title: "Фото",
       type: "array",
       of: [
         {
           type: "object",
           fields: [
-            { name: "asset", type: "image", title: "Image", options: { hotspot: true } },
-            { name: "alt", type: "string", title: "Alt Text", validation: (Rule) => Rule.required() },
+            { name: "asset", type: "image", title: "Зображення", options: { hotspot: true } },
+            { name: "alt", type: "string", title: "Alt-текст", validation: (Rule) => Rule.required() },
           ],
         },
       ],
@@ -47,27 +47,27 @@ export const product = defineType({
     }),
     defineField({
       name: "category",
-      title: "Category",
+      title: "Категорія",
       type: "reference",
       to: [{ type: "category" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "inStock",
-      title: "In Stock",
+      title: "В наявності",
       type: "boolean",
       initialValue: true,
     }),
     defineField({
       name: "attributes",
-      title: "Attributes",
+      title: "Характеристики",
       type: "array",
       of: [
         {
           type: "object",
           fields: [
-            { name: "key", type: "string", title: "Key" },
-            { name: "value", type: "string", title: "Value" },
+            { name: "key", type: "string", title: "Назва" },
+            { name: "value", type: "string", title: "Значення" },
           ],
         },
       ],
@@ -83,4 +83,7 @@ export const product = defineType({
       ],
     }),
   ],
+  preview: {
+    select: { title: "name", subtitle: "price", media: "images.0.asset" },
+  },
 })
