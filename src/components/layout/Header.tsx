@@ -13,8 +13,8 @@ export function Header() {
             <NextImage
               src="/logo.png"
               alt="3Dиво"
-              width={1027}
-              height={863}
+              width={1001}
+              height={645}
               style={{ width: "auto", height: "72px" }}
               priority
             />
