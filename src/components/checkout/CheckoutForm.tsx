@@ -1,6 +1,7 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { sendGAEvent } from "@next/third-parties/google"
 import {
   Box,
   VStack,
@@ -65,6 +66,15 @@ const CARD_PROPS = {
 export function CheckoutForm() {
   const router = useRouter()
   const { items, totalPrice } = useCart()
+
+  useEffect(() => {
+    sendGAEvent("event", "begin_checkout", {
+      currency: "UAH",
+      value: totalPrice,
+      items: items.map((i) => ({ item_id: i.slug, item_name: i.name, price: i.price, quantity: i.quantity })),
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const [customer, setCustomer] = useState<CustomerFields>({ firstName: "", lastName: "", email: "", phone: "", messenger: "viber" })
   const [delivery, setDelivery] = useState<DeliveryValue>(emptyDelivery)

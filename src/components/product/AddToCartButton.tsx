@@ -1,6 +1,7 @@
 "use client"
 import { Button } from "@chakra-ui/react"
 import { useToast } from "@chakra-ui/react"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useCart } from "@/context/CartContext"
 import type { Product } from "@/types"
 
@@ -21,6 +22,11 @@ export function AddToCartButton({ product, quantity }: Props) {
       quantity,
       image: product.images[0]?.asset,
       slug: product.slug.current,
+    })
+    sendGAEvent("event", "add_to_cart", {
+      currency: "UAH",
+      value: product.price * quantity,
+      items: [{ item_id: product.slug.current, item_name: product.name, price: product.price, quantity }],
     })
     toast({
       title: "Товар додано в кошик",

@@ -200,7 +200,7 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <TrackProductView slug={product.slug.current} />
+      <TrackProductView slug={product.slug.current} name={product.name} price={product.price} category={product.category?.name} />
       <Container maxW="7xl" py={8}>
         <Breadcrumbs items={breadcrumbs} />
         <Box display={{ base: "block", md: "flex" }} gap={10}>
