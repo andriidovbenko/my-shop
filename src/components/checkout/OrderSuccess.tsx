@@ -2,6 +2,7 @@
 import { useEffect } from "react"
 import { Box, VStack, Heading, Text, Button, Divider, HStack } from "@chakra-ui/react"
 import Link from "next/link"
+import { sendGAEvent } from "@next/third-parties/google"
 import { useCart } from "@/context/CartContext"
 import { routes } from "@/lib/routes"
 
@@ -12,9 +13,20 @@ interface Props {
 }
 
 export function OrderSuccess({ orderNumber, name, total }: Props) {
-  const { clearCart } = useCart()
+  const { items, clearCart } = useCart()
 
   useEffect(() => {
+    sendGAEvent("event", "purchase", {
+      transaction_id: orderNumber,
+      value: parseFloat(total),
+      currency: "UAH",
+      items: items.map((i) => ({
+        item_id: i.slug,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    })
     clearCart()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
