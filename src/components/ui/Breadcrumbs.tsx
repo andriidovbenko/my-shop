@@ -1,6 +1,7 @@
 "use client"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react"
 import Link from "next/link"
+import { SITE_URL } from "@/lib/metadata"
 
 interface BreadcrumbSegment {
   label: string
@@ -19,7 +20,7 @@ export function Breadcrumbs({ items }: Props) {
       "@type": "ListItem",
       position: index + 1,
       name: item.label,
-      ...(item.href ? { item: item.href } : {}),
+      ...(item.href ? { item: `${SITE_URL}${item.href}` } : {}),
     })),
   }
 
