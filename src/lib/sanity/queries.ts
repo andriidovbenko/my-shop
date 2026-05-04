@@ -47,7 +47,8 @@ export async function getAllCategories(): Promise<Category[]> {
     _id,
     name,
     slug,
-    image
+    image,
+    seo
   }`);
 }
 
@@ -59,8 +60,8 @@ export async function getSitemapProducts(): Promise<{ slug: string; updatedAt: s
   return client.fetch(`*[_type == "product"]{ "slug": slug.current, "updatedAt": _updatedAt }`);
 }
 
-export async function getSitemapCategories(): Promise<{ slug: string }[]> {
-  return client.fetch(`*[_type == "category"]{ "slug": slug.current }`);
+export async function getSitemapCategories(): Promise<{ slug: string; updatedAt: string }[]> {
+  return client.fetch(`*[_type == "category"]{ "slug": slug.current, "updatedAt": _updatedAt }`);
 }
 
 export async function getProductReviews(productSlug: string): Promise<ProductReview[]> {

@@ -27,6 +27,11 @@ export interface Category {
   name: string;
   slug: { current: string };
   image?: SanityImageSource;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    ogImage?: SanityImageSource;
+  };
 }
 
 export interface CartItem {
