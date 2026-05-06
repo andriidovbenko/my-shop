@@ -16,6 +16,7 @@ export interface Product {
   attributes: Array<{ key: string; value: string }>;
   sku?: string;
   youtubeUrl?: string;
+  updatedAt?: string;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;

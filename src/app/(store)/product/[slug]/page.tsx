@@ -22,6 +22,18 @@ export async function generateStaticParams() {
   return slugs.map((s) => ({ slug: s.slug }))
 }
 
+function extractYouTubeId(url: string): string | null {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
+}
+
 type PortableTextSpan = { text?: string }
 
 function portableTextToPlain(blocks: PortableTextBlock[]): string {
@@ -180,6 +192,19 @@ export default async function ProductPage({
     },
   }
 
+  const videoId = product.youtubeUrl ? extractYouTubeId(product.youtubeUrl) : null
+  const videoJsonLd = videoId
+    ? {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        name: product.name,
+        description: seoDescription,
+        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+        embedUrl: `https://www.youtube.com/embed/${videoId}`,
+        uploadDate: product.updatedAt ?? new Date().toISOString(),
+      }
+    : null
+
   const breadcrumbs = [
     { label: "Головна", href: routes.home },
     { label: "Каталог", href: routes.catalog },
@@ -200,6 +225,12 @@ export default async function ProductPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {videoJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(videoJsonLd) }}
+        />
+      )}
       <TrackProductView slug={product.slug.current} name={product.name} price={product.price} category={product.category?.name} />
       <Container maxW="7xl" py={8}>
         <Breadcrumbs items={breadcrumbs} />

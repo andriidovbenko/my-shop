@@ -27,6 +27,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     attributes,
     sku,
     youtubeUrl,
+    "updatedAt": _updatedAt,
     seo
   }`, { slug });
 }
