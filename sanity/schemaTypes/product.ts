@@ -19,6 +19,13 @@ export const product = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "sku",
+      title: "Артикул (SKU)",
+      type: "string",
+      description: "Унікальний код товару (до 50 символів). Якщо не заповнено — генерується автоматично.",
+      validation: (Rule) => Rule.max(50),
+    }),
+    defineField({
       name: "description",
       title: "Опис",
       type: "array",

@@ -109,7 +109,7 @@ export default async function ProductPage({
     name: product.name,
     description: seoDescription,
     image: imageUrls,
-    sku: product.slug.current,
+    sku: product.sku || product.slug.current.slice(0, 50),
     brand: { "@type": "Brand", name: "3Dyvo" },
     offers: {
       "@type": "Offer",
