@@ -14,7 +14,7 @@ import {
   Spinner,
 } from "@chakra-ui/react"
 import Image from "next/image"
-import type { NPCity, NPWarehouse, DeliveryType, DeliveryCarrier, UkrposhtaMethod } from "@/types"
+import type { NPCity, NPWarehouse, DeliveryType, DeliveryCarrier, UkrposhtaMethod, MeestMethod } from "@/types"
 
 export interface DeliveryValue {
   carrier: DeliveryCarrier
@@ -28,6 +28,9 @@ export interface DeliveryValue {
   deliveryMethod: UkrposhtaMethod
   postIndex: string
   streetAddress: string
+  // Meest
+  meestMethod: MeestMethod
+  departmentNumber: string
 }
 
 interface Props {
@@ -39,6 +42,7 @@ interface Props {
 const CARRIERS: { value: DeliveryCarrier; label: string; src: string; color: string }[] = [
   { value: "novaposhta", label: "Нова Пошта", src: "/carriers/novaposhta.svg", color: "#E30613" },
   { value: "ukrposhta", label: "Укрпошта", src: "/carriers/ukrposhta.svg.webp", color: "#F3C43C" },
+  { value: "meest", label: "Meest Express", src: "/carriers/meest.svg", color: "#1A5AA5" },
 ]
 
 export function DeliverySelector({ value, onChange, errors }: Props) {
@@ -98,8 +102,12 @@ export function DeliverySelector({ value, onChange, errors }: Props) {
       ...value,
       carrier: carrier as DeliveryCarrier,
       city: "", cityRef: "", warehouseRef: "", warehouseDescription: "",
-      postIndex: "", streetAddress: "",
+      postIndex: "", streetAddress: "", departmentNumber: "",
     })
+  }
+
+  const handleMeestMethodChange = (method: string) => {
+    onChange({ ...value, meestMethod: method as MeestMethod, streetAddress: "", departmentNumber: "" })
   }
 
   const selectCity = (city: NPCity) => {
@@ -289,6 +297,61 @@ export function DeliverySelector({ value, onChange, errors }: Props) {
           </FormControl>
 
           {value.deliveryMethod === "courier" && (
+            <FormControl isInvalid={!!errors?.streetAddress}>
+              <FormLabel color="text.default">Адреса доставки</FormLabel>
+              <Input
+                value={value.streetAddress}
+                onChange={(e) => onChange({ ...value, streetAddress: e.target.value })}
+                placeholder="вул. Хрещатик, 1, кв. 10"
+                borderColor={errors?.streetAddress ? "red.500" : "border.default"}
+                _focus={{ borderColor: "accent.default", boxShadow: "none" }}
+              />
+              {errors?.streetAddress && <Text color="red.500" fontSize="sm" mt={1}>{errors.streetAddress}</Text>}
+            </FormControl>
+          )}
+        </>
+      )}
+
+      {/* ── Meest Express ── */}
+      {value.carrier === "meest" && (
+        <>
+          <FormControl mb={4} isInvalid={!!errors?.city}>
+            <FormLabel color="text.default">Місто / Населений пункт</FormLabel>
+            <Input
+              value={value.city}
+              onChange={(e) => onChange({ ...value, city: e.target.value })}
+              placeholder="Київ"
+              borderColor={errors?.city ? "red.500" : "border.default"}
+              _focus={{ borderColor: "accent.default", boxShadow: "none" }}
+            />
+            {errors?.city && <Text color="red.500" fontSize="sm" mt={1}>{errors.city}</Text>}
+          </FormControl>
+
+          <FormControl mb={4}>
+            <FormLabel color="text.default">Спосіб отримання</FormLabel>
+            <RadioGroup value={value.meestMethod} onChange={handleMeestMethodChange}>
+              <Stack direction={{ base: "column", sm: "row" }} gap={{ base: 2, sm: 4 }}>
+                <Radio value="department" borderColor="border.default"><Text color="text.default">Відділення</Text></Radio>
+                <Radio value="courier" borderColor="border.default"><Text color="text.default">{"Кур'єр (додому)"}</Text></Radio>
+              </Stack>
+            </RadioGroup>
+          </FormControl>
+
+          {value.meestMethod === "department" && (
+            <FormControl isInvalid={!!errors?.departmentNumber}>
+              <FormLabel color="text.default">Номер відділення</FormLabel>
+              <Input
+                value={value.departmentNumber}
+                onChange={(e) => onChange({ ...value, departmentNumber: e.target.value.replace(/\D/g, "") })}
+                placeholder="123"
+                borderColor={errors?.departmentNumber ? "red.500" : "border.default"}
+                _focus={{ borderColor: "accent.default", boxShadow: "none" }}
+              />
+              {errors?.departmentNumber && <Text color="red.500" fontSize="sm" mt={1}>{errors.departmentNumber}</Text>}
+            </FormControl>
+          )}
+
+          {value.meestMethod === "courier" && (
             <FormControl isInvalid={!!errors?.streetAddress}>
               <FormLabel color="text.default">Адреса доставки</FormLabel>
               <Input

@@ -21,6 +21,14 @@ const upDeliverySchema = z.object({
   streetAddress: z.string().optional(),
 })
 
+const meestDeliverySchema = z.object({
+  carrier: z.literal("meest"),
+  city: z.string().min(1),
+  meestMethod: z.enum(["department", "courier"]),
+  departmentNumber: z.string().optional(),
+  streetAddress: z.string().optional(),
+})
+
 const orderSchema = z.object({
   customer: z.object({
     firstName: z.string().min(2),
@@ -29,7 +37,7 @@ const orderSchema = z.object({
     phone: z.string().regex(/^\+380\d{9}$/),
     messenger: z.enum(["viber", "telegram", "whatsapp"]),
   }),
-  delivery: z.discriminatedUnion("carrier", [npDeliverySchema, upDeliverySchema]),
+  delivery: z.discriminatedUnion("carrier", [npDeliverySchema, upDeliverySchema, meestDeliverySchema]),
   items: z.array(
     z.object({
       productId: z.string(),
@@ -44,8 +52,8 @@ const orderSchema = z.object({
 function generateOrderNumber(): string {
   const now = new Date()
   const date = now.toISOString().slice(0, 10).replace(/-/g, "")
-  const rand = Math.floor(1000 + Math.random() * 9000)
-  return `UA-${date}-${rand}`
+  const time = now.toISOString().slice(11, 16).replace(":", "")
+  return `UA-${date}-${time}`
 }
 
 
@@ -93,17 +101,27 @@ export async function POST(req: NextRequest) {
         `Служба: Нова Пошта\n` +
         `Місто: ${delivery.city}\n` +
         `${label}: ${delivery.warehouseDescription ?? ""}`
-    } else if (delivery.deliveryMethod === "post_office") {
+    } else if (delivery.carrier === "ukrposhta" && delivery.deliveryMethod === "post_office") {
       deliveryText =
         `Служба: Укрпошта\n` +
         `Місто: ${delivery.city}\n` +
         `Індекс: ${delivery.postIndex}\n` +
         `Спосіб: Відділення`
-    } else {
+    } else if (delivery.carrier === "ukrposhta") {
       deliveryText =
         `Служба: Укрпошта (Кур'єр)\n` +
         `Місто: ${delivery.city}\n` +
         `Індекс: ${delivery.postIndex}\n` +
+        `Адреса: ${delivery.streetAddress ?? ""}`
+    } else if (delivery.carrier === "meest" && delivery.meestMethod === "department") {
+      deliveryText =
+        `Служба: Meest Express\n` +
+        `Місто: ${delivery.city}\n` +
+        `Відділення: №${delivery.departmentNumber ?? ""}`
+    } else {
+      deliveryText =
+        `Служба: Meest Express (Кур'єр)\n` +
+        `Місто: ${delivery.city}\n` +
         `Адреса: ${delivery.streetAddress ?? ""}`
     }
 

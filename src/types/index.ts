@@ -53,8 +53,9 @@ export type OrderStatus =
   | "delivered";
 
 export type DeliveryType = "warehouse" | "postomat" | "courier";
-export type DeliveryCarrier = "novaposhta" | "ukrposhta";
+export type DeliveryCarrier = "novaposhta" | "ukrposhta" | "meest";
 export type UkrposhtaMethod = "post_office" | "courier";
+export type MeestMethod = "department" | "courier";
 export type MessengerType = "viber" | "telegram" | "whatsapp";
 
 export interface Order {
@@ -80,6 +81,9 @@ export interface Order {
     postIndex?: string;
     deliveryMethod?: UkrposhtaMethod;
     streetAddress?: string;
+    // Meest
+    meestMethod?: MeestMethod;
+    departmentNumber?: string;
   };
   items: Array<{
     productId: string;

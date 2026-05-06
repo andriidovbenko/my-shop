@@ -46,6 +46,8 @@ const emptyDelivery: DeliveryValue = {
   deliveryMethod: "post_office",
   postIndex: "",
   streetAddress: "",
+  meestMethod: "department",
+  departmentNumber: "",
 }
 
 const MESSENGERS: { value: MessengerType; label: string; Icon: React.ElementType; color: string }[] = [
@@ -85,6 +87,9 @@ export function CheckoutForm() {
   const [offerAccepted, setOfferAccepted] = useState(false)
   const [offerError, setOfferError] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   const isFormValid = (): boolean => {
     if (!customerSchema.safeParse(customer).success) return false
@@ -95,9 +100,12 @@ export function CheckoutForm() {
       } else {
         if (!delivery.warehouseRef) return false
       }
-    } else {
+    } else if (delivery.carrier === "ukrposhta") {
       if (!/^\d{5}$/.test(delivery.postIndex)) return false
       if (delivery.deliveryMethod === "courier" && !delivery.streetAddress.trim()) return false
+    } else {
+      if (delivery.meestMethod === "department" && !delivery.departmentNumber.trim()) return false
+      if (delivery.meestMethod === "courier" && !delivery.streetAddress.trim()) return false
     }
     return offerAccepted
   }
@@ -120,9 +128,14 @@ export function CheckoutForm() {
       } else {
         if (!delivery.warehouseRef) newDeliveryErrors.warehouseRef = "Оберіть відділення"
       }
-    } else {
+    } else if (delivery.carrier === "ukrposhta") {
       if (!/^\d{5}$/.test(delivery.postIndex)) newDeliveryErrors.postIndex = "Введіть 5-значний індекс"
       if (delivery.deliveryMethod === "courier" && !delivery.streetAddress.trim())
+        newDeliveryErrors.streetAddress = "Вкажіть адресу доставки"
+    } else {
+      if (delivery.meestMethod === "department" && !delivery.departmentNumber.trim())
+        newDeliveryErrors.departmentNumber = "Вкажіть номер відділення"
+      if (delivery.meestMethod === "courier" && !delivery.streetAddress.trim())
         newDeliveryErrors.streetAddress = "Вкажіть адресу доставки"
     }
 
@@ -170,7 +183,7 @@ export function CheckoutForm() {
       }
 
       router.push(
-        `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&name=${encodeURIComponent(customer.firstName)}&total=${totalPrice}`
+        `/checkout/success?order=${encodeURIComponent(data.orderNumber)}&name=${encodeURIComponent(customer.firstName)}&lastName=${encodeURIComponent(customer.lastName)}&total=${totalPrice}`
       )
     } catch {
       setServerError("Помилка мережі. Спробуйте ще раз.")
@@ -178,6 +191,8 @@ export function CheckoutForm() {
       setIsSubmitting(false)
     }
   }
+
+  if (!mounted) return null
 
   if (items.length === 0) {
     return (

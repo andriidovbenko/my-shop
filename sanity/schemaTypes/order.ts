@@ -51,7 +51,9 @@ export const order = defineType({
         { name: "warehouseDescription", type: "string", title: "Відділення (НП)" },
         { name: "deliveryMethod", type: "string", title: "Спосіб доставки (УП)" },
         { name: "postIndex", type: "string", title: "Поштовий індекс (УП)" },
-        { name: "streetAddress", type: "string", title: "Адреса (УП кур'єр)" },
+        { name: "streetAddress", type: "string", title: "Адреса кур'єра" },
+        { name: "meestMethod", type: "string", title: "Спосіб доставки (Meest)" },
+        { name: "departmentNumber", type: "string", title: "Відділення (Meest)" },
       ],
     }),
     defineField({

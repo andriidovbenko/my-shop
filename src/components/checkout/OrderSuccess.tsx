@@ -9,10 +9,11 @@ import { routes } from "@/lib/routes"
 interface Props {
   orderNumber: string
   name: string
+  lastName: string
   total: string
 }
 
-export function OrderSuccess({ orderNumber, name, total }: Props) {
+export function OrderSuccess({ orderNumber, name, lastName, total }: Props) {
   const { items, clearCart } = useCart()
 
   useEffect(() => {
@@ -33,7 +34,8 @@ export function OrderSuccess({ orderNumber, name, total }: Props) {
 
   const iban = process.env.NEXT_PUBLIC_IBAN
   const recipient = process.env.NEXT_PUBLIC_RECIPIENT_NAME
-  const paymentPurpose = `Замовлення #${orderNumber}, ${name}`
+  const fullName = [name, lastName].filter(Boolean).join(" ")
+  const paymentPurpose = `Замовлення #${orderNumber}, ${fullName}`
 
   return (
     <VStack align="stretch" gap={6} maxW="lg" mx="auto">

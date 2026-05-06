@@ -5,18 +5,20 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: buildTitle("Замовлення прийнято"),
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/checkout/success" },
 }
 
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ order?: string; name?: string; total?: string }>
+  searchParams: Promise<{ order?: string; name?: string; lastName?: string; total?: string }>
 }) {
-  const { order = "", name = "", total = "0" } = await searchParams
+  const { order = "", name = "", lastName = "", total = "0" } = await searchParams
 
   return (
     <Container maxW="3xl" py={12}>
-      <OrderSuccess orderNumber={order} name={name} total={total} />
+      <OrderSuccess orderNumber={order} name={name} lastName={lastName} total={total} />
     </Container>
   )
 }
