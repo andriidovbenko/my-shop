@@ -14,8 +14,10 @@ export async function getAllProducts(): Promise<Product[]> {
   }`);
 }
 
+const PRODUCT_FIELDS = `_id, name, slug, price, images, category->{_id, name, slug}, inStock, attributes`
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
-  return client.fetch(`*[_type == "product" && slug.current == $slug][0] {
+  const product = await client.fetch(`*[_type == "product" && slug.current == $slug][0] {
     _id,
     name,
     slug,
@@ -28,8 +30,24 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     sku,
     youtubeUrl,
     "updatedAt": _updatedAt,
-    seo
-  }`, { slug });
+    seo,
+    "explicitRelated": coalesce(relatedProducts, [])[inStock == true]->{${PRODUCT_FIELDS}},
+    "reverseRelated": *[_type == "product" && references(^._id) && inStock == true && slug.current != $slug]{${PRODUCT_FIELDS}}
+  }`, { slug })
+
+  if (!product) return null
+
+  const seen = new Set<string>()
+  const relatedProducts: Product[] = []
+  for (const p of [...(product.explicitRelated ?? []), ...(product.reverseRelated ?? [])]) {
+    if (!seen.has(p._id)) {
+      seen.add(p._id)
+      relatedProducts.push(p)
+    }
+  }
+
+  const { explicitRelated: _e, reverseRelated: _r, ...rest } = product
+  return { ...rest, relatedProducts }
 }
 
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {

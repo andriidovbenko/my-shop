@@ -86,6 +86,13 @@ export const product = defineType({
       description: "Посилання на YouTube відео (наприклад: https://youtu.be/xxx або https://www.youtube.com/watch?v=xxx)",
     }),
     defineField({
+      name: "relatedProducts",
+      title: "Схожі товари",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "product" }] }],
+      validation: (Rule) => Rule.max(8),
+    }),
+    defineField({
       name: "seo",
       title: "SEO",
       type: "object",
