@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ order?: string; name?: string; lastName?: string; total?: string }>
+  searchParams: Promise<{ order?: string; total?: string }>
 }) {
-  const { order = "", name = "", lastName = "", total = "0" } = await searchParams
+  const { order = "", total = "0" } = await searchParams
 
   return (
     <Container maxW="3xl" py={12}>
-      <OrderSuccess orderNumber={order} name={name} lastName={lastName} total={total} />
+      <OrderSuccess orderNumber={order} total={total} />
     </Container>
   )
 }

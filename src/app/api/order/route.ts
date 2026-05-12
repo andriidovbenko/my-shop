@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { writeClient } from "@/lib/sanity/client"
 import { sendTelegramMessage } from "@/lib/telegram"
+import { PAYMENT } from "@/lib/payment"
 
 const npDeliverySchema = z.object({
   carrier: z.literal("novaposhta"),
@@ -137,7 +138,7 @@ export async function POST(req: NextRequest) {
       `📦 Доставка\n${deliveryText}\n\n` +
       `🛒 Товари\n${itemsList}\n\n` +
       `💰 Сума: ${totalAmount} грн\n` +
-      `💳 Оплата: IBAN`
+      `💳 Оплата на картку:\nОтримувач: ${PAYMENT.recipient}\nIBAN: ${PAYMENT.iban}`
 
     // TODO: Sanity order storage can be removed once confirmed stable —
     // all order data is already sent to Telegram. If removed, await this call

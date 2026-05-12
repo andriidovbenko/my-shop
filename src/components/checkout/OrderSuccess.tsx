@@ -1,20 +1,26 @@
 "use client"
-import { useEffect } from "react"
-import { Box, VStack, Heading, Text, Button, Divider, HStack } from "@chakra-ui/react"
+import { useEffect, useCallback } from "react"
+import { Box, VStack, Heading, Text, Button, Divider, HStack, useToast } from "@chakra-ui/react"
 import Link from "next/link"
 import { sendGAEvent } from "@next/third-parties/google"
 import { useCart } from "@/context/CartContext"
 import { routes } from "@/lib/routes"
+import { PAYMENT } from "@/lib/payment"
 
 interface Props {
   orderNumber: string
-  name: string
-  lastName: string
   total: string
 }
 
-export function OrderSuccess({ orderNumber, name, lastName, total }: Props) {
+export function OrderSuccess({ orderNumber, total }: Props) {
   const { items, clearCart } = useCart()
+  const toast = useToast()
+
+  const copy = useCallback((value: string) => {
+    navigator.clipboard.writeText(value).then(() => {
+      toast({ description: `Скопійовано: ${value}`, status: "success", duration: 2000, position: "top" })
+    })
+  }, [toast])
 
   useEffect(() => {
     sendGAEvent("event", "purchase", {
@@ -32,10 +38,7 @@ export function OrderSuccess({ orderNumber, name, lastName, total }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const iban = process.env.NEXT_PUBLIC_IBAN
-  const recipient = process.env.NEXT_PUBLIC_RECIPIENT_NAME
-  const fullName = [name, lastName].filter(Boolean).join(" ")
-  const paymentPurpose = `Замовлення #${orderNumber}, ${fullName}`
+  const paymentPurpose = `Оплата за 3D-друкований товар з пластику. Замовлення #${orderNumber}`
 
   return (
     <VStack align="stretch" gap={6} maxW="lg" mx="auto">
@@ -70,23 +73,31 @@ export function OrderSuccess({ orderNumber, name, lastName, total }: Props) {
             <Text fontWeight="bold" color="accent.default" fontSize="lg">{total} ₴</Text>
           </HStack>
           <Divider borderColor="border.default" />
-          {iban && (
-            <HStack justify="space-between">
-              <Text color="text.muted">IBAN:</Text>
-              <Text fontWeight="medium" color="text.default" wordBreak="break-all" textAlign="right">
-                {iban}
-              </Text>
-            </HStack>
-          )}
-          {recipient && (
-            <HStack justify="space-between">
-              <Text color="text.muted">Отримувач:</Text>
-              <Text fontWeight="medium" color="text.default" textAlign="right">{recipient}</Text>
-            </HStack>
-          )}
+          <HStack justify="space-between">
+            <Text color="text.muted">Отримувач:</Text>
+            <Text fontWeight="medium" color="text.default" textAlign="right" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(PAYMENT.recipient)}>{PAYMENT.recipient}</Text>
+          </HStack>
+          <HStack justify="space-between">
+            <Text color="text.muted">IBAN:</Text>
+            <Text fontWeight="medium" color="text.default" wordBreak="break-all" textAlign="right" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(PAYMENT.iban)}>
+              {PAYMENT.iban}
+            </Text>
+          </HStack>
+          <HStack justify="space-between">
+            <Text color="text.muted">ІПН/ЄДРПОУ:</Text>
+            <Text fontWeight="medium" color="text.default" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(PAYMENT.ipn)}>{PAYMENT.ipn}</Text>
+          </HStack>
+          <HStack justify="space-between">
+            <Text color="text.muted">Банк:</Text>
+            <Text fontWeight="medium" color="text.default" textAlign="right" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(PAYMENT.bank)}>{PAYMENT.bank}</Text>
+          </HStack>
+          <HStack justify="space-between">
+            <Text color="text.muted">МФО:</Text>
+            <Text fontWeight="medium" color="text.default" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(PAYMENT.mfo)}>{PAYMENT.mfo}</Text>
+          </HStack>
           <HStack justify="space-between" align="start">
-            <Text color="text.muted" flexShrink={0}>Призначення:</Text>
-            <Text fontWeight="medium" color="text.default" textAlign="right">{paymentPurpose}</Text>
+            <Text color="text.muted" flexShrink={0}>Призначення платежу:</Text>
+            <Text fontWeight="medium" color="text.default" textAlign="right" cursor="pointer" _hover={{ color: "accent.default" }} onClick={() => copy(paymentPurpose)}>{paymentPurpose}</Text>
           </HStack>
         </VStack>
       </Box>

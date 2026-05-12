@@ -1,5 +1,6 @@
 import { Box, Container, Heading, Text, VStack, SimpleGrid, Flex, Divider } from "@chakra-ui/react"
 import { buildTitle, SITE_URL } from "@/lib/metadata"
+import { PAYMENT } from "@/lib/payment"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -39,8 +40,6 @@ const values = [
 ]
 
 export default function AboutPage() {
-  const iban = process.env.NEXT_PUBLIC_IBAN
-  const recipient = process.env.NEXT_PUBLIC_RECIPIENT_NAME
   const phone = process.env.NEXT_PUBLIC_CONTACT_PHONE
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL
   const telegram = process.env.NEXT_PUBLIC_CONTACT_TELEGRAM
@@ -157,60 +156,54 @@ export default function AboutPage() {
         </Box>
 
         {/* Payment & Delivery */}
-        {(iban || recipient) && (
-          <Box mb={16}>
-            <Heading as="h2" size="lg" color="text.default" mb={6}>
-              Оплата та доставка
-            </Heading>
-            <SimpleGrid columns={{ base: 1, sm: 2 }} gap={5}>
-              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
-                <Flex align="center" gap={2} mb={4}>
-                  <Text fontSize="xl">💳</Text>
-                  <Text fontWeight="700" fontSize="sm" color="text.default">Оплата</Text>
-                </Flex>
-                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
-                  Банківський переказ на IBAN після оформлення замовлення
-                </Text>
-                <Divider borderColor="border.default" mb={4} />
-                <VStack align="stretch" gap={2} fontSize="sm">
-                  {recipient && (
-                    <Box>
-                      <Text color="text.muted" fontSize="xs" mb={0.5}>Отримувач</Text>
-                      <Text color="text.default" fontWeight="500">{recipient}</Text>
-                    </Box>
-                  )}
-                  {iban && (
-                    <Box>
-                      <Text color="text.muted" fontSize="xs" mb={0.5}>IBAN</Text>
-                      <Text color="text.default" fontWeight="500" wordBreak="break-all">{iban}</Text>
-                    </Box>
-                  )}
-                </VStack>
-              </Box>
+        <Box mb={16}>
+          <Heading as="h2" size="lg" color="text.default" mb={6}>
+            Оплата та доставка
+          </Heading>
+          <SimpleGrid columns={{ base: 1, sm: 2 }} gap={5}>
+            <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
+              <Flex align="center" gap={2} mb={4}>
+                <Text fontSize="xl">💳</Text>
+                <Text fontWeight="700" fontSize="sm" color="text.default">Оплата</Text>
+              </Flex>
+              <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
+                Банківський переказ на IBAN після оформлення замовлення
+              </Text>
+              <Divider borderColor="border.default" mb={4} />
+              <VStack align="stretch" gap={2} fontSize="sm">
+                <Box>
+                  <Text color="text.muted" fontSize="xs" mb={0.5}>Отримувач</Text>
+                  <Text color="text.default" fontWeight="500">{PAYMENT.recipient}</Text>
+                </Box>
+                <Box>
+                  <Text color="text.muted" fontSize="xs" mb={0.5}>IBAN</Text>
+                  <Text color="text.default" fontWeight="500" wordBreak="break-all">{PAYMENT.iban}</Text>
+                </Box>
+              </VStack>
+            </Box>
 
-              <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
-                <Flex align="center" gap={2} mb={4}>
-                  <Text fontSize="xl">📦</Text>
-                  <Text fontWeight="700" fontSize="sm" color="text.default">Доставка</Text>
-                </Flex>
-                <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
-                  Нова Пошта або Укрпошта — доставка по всій Україні на ваш вибір
-                </Text>
-                <Divider borderColor="border.default" mb={4} />
-                <VStack align="stretch" gap={2} fontSize="sm">
-                  <Box>
-                    <Text color="text.muted" fontSize="xs" mb={0.5}>Терміни відправки</Text>
-                    <Text color="text.default" fontWeight="500">1–2 робочих дні після оплати</Text>
-                  </Box>
-                  <Box>
-                    <Text color="text.muted" fontSize="xs" mb={0.5}>Вартість доставки</Text>
-                    <Text color="text.default" fontWeight="500">За тарифами перевізника</Text>
-                  </Box>
-                </VStack>
-              </Box>
-            </SimpleGrid>
-          </Box>
-        )}
+            <Box bg="bg.card" borderRadius="card" shadow="card" border="1px solid" borderColor="border.default" p={5} display="flex" flexDirection="column">
+              <Flex align="center" gap={2} mb={4}>
+                <Text fontSize="xl">📦</Text>
+                <Text fontWeight="700" fontSize="sm" color="text.default">Доставка</Text>
+              </Flex>
+              <Text fontSize="sm" color="text.muted" lineHeight="tall" mb={4} flex="1">
+                Нова Пошта або Укрпошта — доставка по всій Україні на ваш вибір
+              </Text>
+              <Divider borderColor="border.default" mb={4} />
+              <VStack align="stretch" gap={2} fontSize="sm">
+                <Box>
+                  <Text color="text.muted" fontSize="xs" mb={0.5}>Терміни відправки</Text>
+                  <Text color="text.default" fontWeight="500">1–2 робочих дні після оплати</Text>
+                </Box>
+                <Box>
+                  <Text color="text.muted" fontSize="xs" mb={0.5}>Вартість доставки</Text>
+                  <Text color="text.default" fontWeight="500">За тарифами перевізника</Text>
+                </Box>
+              </VStack>
+            </Box>
+          </SimpleGrid>
+        </Box>
 
         {/* Contact */}
         <Box

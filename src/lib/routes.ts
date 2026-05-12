@@ -6,6 +6,7 @@ export const routes = {
   about: "/about",
   privacy: "/privacy",
   offer: "/offer",
+  payment: "/payment",
   product: (slug: string) => `/product/${slug}`,
   category: (categorySlug: string) => `/catalog?category=${categorySlug}`,
 } as const

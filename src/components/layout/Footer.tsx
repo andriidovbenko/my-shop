@@ -90,6 +90,7 @@ export function Footer() {
             {[
               { label: "Каталог", href: routes.catalog },
               { label: "Про нас", href: routes.about },
+              { label: "Оплата", href: routes.payment },
               { label: "Кошик", href: routes.cart },
             ].map(({ label, href }) => (
               <Link key={href} href={href} style={{ textDecoration: "none" }}>
