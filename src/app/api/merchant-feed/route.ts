@@ -43,15 +43,20 @@ export async function GET() {
     name: string
     description: Array<{ _type: string; children?: Array<{ text?: string }> }>
     price: number
-    inStock: boolean
+    inStock: boolean | null
     images: Array<{ asset: object }>
     category: string
   }) => {
-    const imageUrl = p.images?.[0]?.asset
-      ? urlFor(p.images[0].asset).width(800).height(800).url()
+    const [firstImage, ...extraImages] = p.images ?? []
+    const imageUrl = firstImage?.asset
+      ? urlFor(firstImage.asset).width(800).height(800).url()
       : ""
+    const additionalImageLinks = extraImages
+      .filter((img) => img?.asset)
+      .map((img) => `      <g:additional_image_link>${escapeXml(urlFor(img.asset).width(800).height(800).url())}</g:additional_image_link>`)
+      .join("\n")
     const description = escapeXml(blocksToPlainText(p.description) || p.name)
-    const availability = p.inStock ? "in_stock" : "out_of_stock"
+    const availability = p.inStock !== false ? "in_stock" : "out_of_stock"
     const price = `${p.price.toFixed(2)} UAH`
     const link = `${SITE_URL}/product/${p.slug}`
 
@@ -62,8 +67,13 @@ export async function GET() {
       <g:description>${description}</g:description>
       <g:link>${escapeXml(link)}</g:link>
       ${imageUrl ? `<g:image_link>${escapeXml(imageUrl)}</g:image_link>` : ""}
+${additionalImageLinks}
       <g:availability>${availability}</g:availability>
       <g:price>${price}</g:price>
+      <g:shipping>
+        <g:country>UA</g:country>
+        <g:price>90.00 UAH</g:price>
+      </g:shipping>
       <g:brand>${escapeXml(BRAND)}</g:brand>
       <g:mpn>${escapeXml(p.id)}</g:mpn>
       <g:condition>new</g:condition>
