@@ -65,9 +65,9 @@ export async function GET() {
       <g:availability>${availability}</g:availability>
       <g:price>${price}</g:price>
       <g:brand>${escapeXml(BRAND)}</g:brand>
+      <g:mpn>${escapeXml(p.id)}</g:mpn>
       <g:condition>new</g:condition>
       ${p.category ? `<g:product_type>${escapeXml(p.category)}</g:product_type>` : ""}
-      <g:identifier_exists>no</g:identifier_exists>
     </item>`
   }).join("\n")
 

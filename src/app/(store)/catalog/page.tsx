@@ -113,11 +113,14 @@ export default async function CatalogPage({
         "@type": "Product",
         name: p.name,
         url: `${SITE_URL}/product/${p.slug.current}`,
+        image: p.images?.[0]?.asset
+          ? urlFor(p.images[0].asset).width(800).height(800).url()
+          : undefined,
         offers: {
           "@type": "Offer",
           price: p.price,
           priceCurrency: "UAH",
-          availability: "https://schema.org/InStock",
+          availability: p.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
         },
       },
     })),

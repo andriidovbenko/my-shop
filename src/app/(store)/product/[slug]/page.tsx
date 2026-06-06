@@ -120,9 +120,10 @@ export default async function ProductPage({
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: seoDescription,
+    description: seoDescription || product.name,
     image: imageUrls,
     sku: product.sku || product.slug.current.slice(0, 50),
+    mpn: product.sku || product.slug.current.slice(0, 50),
     brand: { "@type": "Brand", name: "3Dyvo" },
     offers: {
       "@type": "Offer",
@@ -135,6 +136,7 @@ export default async function ProductPage({
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingDestination: { "@type": "DefinedRegion", addressCountry: "UA" },
+        shippingRate: { "@type": "MonetaryAmount", value: "90", currency: "UAH" },
         deliveryTime: {
           "@type": "ShippingDeliveryTime",
           handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
