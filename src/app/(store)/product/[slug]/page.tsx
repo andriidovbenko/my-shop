@@ -201,8 +201,9 @@ export default async function ProductPage({
         "@context": "https://schema.org",
         "@type": "VideoObject",
         name: product.name,
-        description: seoDescription,
-        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+        description: seoDescription || product.name,
+        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
         embedUrl: `https://www.youtube.com/embed/${videoId}`,
         uploadDate: product.updatedAt ?? new Date().toISOString(),
       }
