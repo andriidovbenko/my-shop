@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { writeClient, client } from "@/lib/sanity/client"
 import { sendMessageToTopic, sendTelegramMessage } from "@/lib/telegram"
+import { sendEmail } from "@/lib/resend"
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
     const groupNumericId = process.env.TELEGRAM_SUPPORT_GROUP_ID?.replace("-100", "")
     const topicLink = `https://t.me/c/${groupNumericId}/${session.topicId}`
     sendMessageToTopic(session.topicId, text.trim())
+    sendEmail(text.trim(), 'Нове повідомлення в чаті')
     sendTelegramMessage(`💬 Нове повідомлення в чаті:\n${text.trim()}\n\n👉 ${topicLink}`)
 
     return NextResponse.json({ ok: true, timestamp })
