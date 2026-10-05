@@ -70,23 +70,6 @@ export async function POST(req: NextRequest) {
     const { customer, delivery, items, totalAmount } = parsed.data
     const orderNumber = generateOrderNumber()
 
-    await writeClient.create({
-      _type: "order",
-      orderNumber,
-      status: "pending_payment",
-      customer,
-      delivery,
-      items: items.map((item) => ({
-        _key: item.productId,
-        productId: item.productId,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      totalAmount,
-      createdAt: new Date().toISOString(),
-    })
-
     const itemsList = items
       .map((i) => `${i.name} x ${i.quantity} — ${i.price} грн`)
       .join("\n")
@@ -141,12 +124,32 @@ export async function POST(req: NextRequest) {
       `💰 Сума: ${totalAmount} грн\n` +
       `💳 Оплата на картку:\nОтримувач: ${PAYMENT.recipient}\nIBAN: ${PAYMENT.iban}`
 
-    sendEmail(message)
-    // TODO: Sanity order storage can be removed once confirmed stable —
-    // all order data is already sent to Telegram. If removed, await this call
-    // and return an error to the customer on failure (Telegram becomes single source of truth).
-    sendTelegramMessage(message)
-    
+    // Send notifications first (critical path)
+    await Promise.all([
+      sendEmail(message),
+      sendTelegramMessage(message),
+    ])
+
+    // Save to Sanity asynchronously without blocking response
+    // If it fails, order is still confirmed via email/Telegram
+    writeClient.create({
+      _type: "order",
+      orderNumber,
+      status: "pending_payment",
+      customer,
+      delivery,
+      items: items.map((item) => ({
+        _key: item.productId,
+        productId: item.productId,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      totalAmount,
+      createdAt: new Date().toISOString(),
+    }).catch((err) => {
+      console.error("Failed to save order to Sanity:", err)
+    })
 
     return NextResponse.json({ orderNumber })
   } catch (err) {
