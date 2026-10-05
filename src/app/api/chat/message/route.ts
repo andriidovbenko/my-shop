@@ -20,16 +20,24 @@ export async function POST(req: NextRequest) {
 
     const timestamp = new Date().toISOString()
 
-    await writeClient
+    const groupNumericId = process.env.TELEGRAM_SUPPORT_GROUP_ID?.replace("-100", "")
+    const topicLink = `https://t.me/c/${groupNumericId}/${session.topicId}`
+
+    // Send notifications first (critical path)
+    await Promise.all([
+      sendMessageToTopic(session.topicId, text.trim()),
+      sendEmail(text.trim(), 'Нове повідомлення в чаті'),
+      sendTelegramMessage(`💬 Нове повідомлення в чаті:\n${text.trim()}\n\n👉 ${topicLink}`),
+    ])
+
+    // Save to Sanity asynchronously without blocking response
+    writeClient
       .patch(session._id)
       .append("messages", [{ _key: crypto.randomUUID(), role: "user", text: text.trim(), timestamp }])
       .commit()
-
-    const groupNumericId = process.env.TELEGRAM_SUPPORT_GROUP_ID?.replace("-100", "")
-    const topicLink = `https://t.me/c/${groupNumericId}/${session.topicId}`
-    sendMessageToTopic(session.topicId, text.trim())
-    sendEmail(text.trim(), 'Нове повідомлення в чаті')
-    sendTelegramMessage(`💬 Нове повідомлення в чаті:\n${text.trim()}\n\n👉 ${topicLink}`)
+      .catch((err) => {
+        console.error("Failed to save message to Sanity:", err)
+      })
 
     return NextResponse.json({ ok: true, timestamp })
   } catch (err) {
